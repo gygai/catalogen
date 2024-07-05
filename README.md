@@ -21,16 +21,18 @@ npm install -g pnpm
 ```
 
 ### Running the project
-Run specofic app using:
+
+#### Run specific app:
 ```bash
 pnpm --filter site dev
 ```
-or go to the app directory and run:
+OR
 ```bash
+cd apps/site
 pnpm dev
 ```
 
-Run all apps using the following command:
+Run all apps:
 ```bash
 pnpm dev
 ```
