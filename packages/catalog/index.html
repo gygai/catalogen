@@ -30,12 +30,12 @@
 </y-store>
 
 
- 
+
 <script type="module">
-    import * as Y from 'yjs'; 
-    import {connectFakeStore} from './src/index.js'; 
+    import * as Y from 'yjs';
+    import {connectFakeStore} from './src/fake-store/index.ts';
     document.querySelector('y-gallery').items =  connectFakeStore(new Y.Doc(), 'items');
-   
+
 </script>
 
 
