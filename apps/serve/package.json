@@ -7,17 +7,25 @@
     "deploy": "partykit deploy"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.34",
+    "@statelyai/agent": "^0.1.4",
+    "@xstate/graph": "^2.0.0",
+    "@y-block/gallery": "workspace:*",
+    "ai": "^3.2.16",
+    "object-hash": "^3.0.0",
     "partysocket": "^1.0.1",
     "quill-cursors": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
+    "xstate": "^5.14.0",
     "y-partykit": "^0.0.27",
     "y-quill": "^0.1.5",
     "yjs": "^13.6.14",
-    "@y-block/gallery": "workspace:*"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "partykit": "^0.0.100",

@@ -2,10 +2,17 @@ import type * as Party from "partykit/server";
 import { onConnect, type YPartyKitOptions } from "y-partykit";
 import type { Doc } from "yjs";
 import { SINGLETON_ROOM_ID } from "./rooms";
+import {type ActorRef, type ActorRefFrom, createActor} from "xstate";
+import machine from "./agents/simple";
 
 export default class EditorServer implements Party.Server {
   yjsOptions: YPartyKitOptions = {};
-  constructor(public room: Party.Room) {}
+  actor: ActorRefFrom<typeof machine>;
+  constructor(public room: Party.Room) {
+    this.actor=  createActor(machine, {
+      logger: (msg) => console.log(msg),
+    }).start();
+  }
 
   getOpts() {
     // options must match when calling unstable_getYDoc and onConnect
@@ -17,7 +24,14 @@ export default class EditorServer implements Party.Server {
 
   async onConnect(conn: Party.Connection) {
     await this.updateCount();
+
+    this.actor.subscribe((state) => {
+       console.log("state", state);
+        conn.send(JSON.stringify({type: "thought", thought: state.context.thought}));
+        
+    });
     return onConnect(conn, this.room, this.getOpts());
+    
   }
 
   async onClose(_: Party.Connection) {

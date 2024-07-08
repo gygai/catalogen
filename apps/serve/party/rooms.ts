@@ -1,4 +1,6 @@
 import type * as Party from "partykit/server";
+import {createActor} from "xstate";
+import {machine} from "./agents/simple";
 
 export interface Rooms {
   [key: string]: number;
@@ -11,10 +13,20 @@ export default class OccupancyServer implements Party.Server {
 
   constructor(public room: Party.Room) {
     this.rooms = {};
+     
+  }
+  
+  onStart() {
+
+  
+
+
   }
 
   onConnect(connection: Party.Connection) {
     connection.send(JSON.stringify({ type: "rooms", rooms: this.rooms }));
+     
+
   }
 
   async onRequest(req: Party.Request) {
