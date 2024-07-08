@@ -1,13 +1,19 @@
 {
-  "name": "agent",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "socialpicker",
+  "version": "1.0.0",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "node server",
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@langchain/openai": "^0.2.1",
+    "langchain": "^0.2.8"
   }
 }
