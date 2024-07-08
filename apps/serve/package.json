@@ -1,0 +1,26 @@
+{
+  "name": "yparty",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "partykit dev --live",
+    "deploy": "partykit deploy"
+  },
+  "dependencies": {
+    "partysocket": "^1.0.1",
+    "quill-cursors": "^4.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-quill": "^2.0.0",
+    "y-partykit": "^0.0.27",
+    "y-quill": "^0.1.5",
+    "yjs": "^13.6.14",
+    "@y-block/gallery": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "partykit": "^0.0.100",
+    "typescript": "^5.4.2"
+  }
+}
