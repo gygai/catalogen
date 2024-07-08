@@ -95,3 +95,7 @@ dist
 !.yarn/versions
 !.yarn/cache
 .idea
+temp
+/temp/
+lib
+/lib/`

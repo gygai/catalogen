@@ -1,12 +1,152 @@
 {
-  "name": "catalog",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "@y-block/gallery",
+  "version": "1.0.1-beta.2",
+  "type": "module",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "types/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "beta"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "peerDependencies": {
+    "atomico": "*",
+    "@atomico/react": "*",
+    "@atomico/vue": "*"
+  },
+  "dependencies": {
+    "@y-block/array": "^1.0.1-beta.2",
+    "@y-block/map": "^1.0.1-beta.2",
+    "@y-block/props": "^1.0.1-beta.2",
+    "yjs": "^13.6.18"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "start": "vite",
+    "build:types": "tsc",
+    "build:compile": "library \"src/**/*\"",
+    "build:exports": "exports \"lib/**/*\" \"types/**/*\" --wrappers",
+    "dev:exports": "exports src/**/* --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.4",
+    "@atomico/postcss-tokens": "^3.5.0",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.27",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@atomico/exports": "^1.13.2",
+    "@atomico/hooks": "^4.4.1",
+    "@atomico/run": "^0.14.2",
+    "@atomico/scaffold": "^2.9.5",
+    "@atomico/storybook": "^2.6.0",
+    "@atomico/tsconfig": "^1.1.2",
+    "@atomico/use-disabled": "^2.0.0",
+    "@atomico/vite": "^2.21.1",
+    "atomico": "^1.77.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6",
+    "@storybook/types": "^8.1.11"
+  },
+  "postcss": {
+    "plugins": {
+      "@atomico/postcss-tokens": {},
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
+  },
+  "exports": {
+    "./tsconfig.json": {
+      "default": "./src/stories/tsconfig.json"
+    },
+    "./element": {
+      "types": "./types/element.d.ts",
+      "default": "./lib/element.js"
+    },
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./react": {
+      "types": "./wrapper/react.d.ts",
+      "default": "./wrapper/react.js"
+    },
+    "./preact": {
+      "types": "./wrapper/preact.d.ts",
+      "default": "./wrapper/preact.js"
+    },
+    "./vue": {
+      "types": "./wrapper/vue.d.ts",
+      "default": "./wrapper/vue.js"
+    },
+    "./README.md": {
+      "default": "./types/README.md"
+    },
+    "./element/react": {
+      "types": "./wrapper/element/react.d.ts",
+      "default": "./wrapper/element/react.js"
+    },
+    "./element/preact": {
+      "types": "./wrapper/element/preact.d.ts",
+      "default": "./wrapper/element/preact.js"
+    },
+    "./element/vue": {
+      "types": "./wrapper/element/vue.d.ts",
+      "default": "./wrapper/element/vue.js"
+    },
+    "./catalog": {
+      "types": "./src/fake-store/catalog.ts",
+      "default": "./src/fake-store/catalog.ts"
+    },
+    "./fake-store": {
+      "types": "./types/fake-store/index.d.ts",
+      "default": "./lib/fake-store.js"
+    },
+    "./fake-store/catalog": {
+      "types": "./types/fake-store/catalog.d.ts",
+      "default": "./lib/fake-store/catalog.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "element": [
+        "types/element.d.ts"
+      ],
+      "react": [
+        "wrapper/react.d.ts"
+      ],
+      "preact": [
+        "wrapper/preact.d.ts"
+      ],
+      "vue": [
+        "wrapper/vue.d.ts"
+      ],
+      "element/react": [
+        "wrapper/element/react.d.ts"
+      ],
+      "element/preact": [
+        "wrapper/element/preact.d.ts"
+      ],
+      "element/vue": [
+        "wrapper/element/vue.d.ts"
+      ],
+      "catalog": [
+        "src/fake-store/catalog.ts"
+      ],
+      "fake-store/catalog": [
+        "types/fake-store/catalog.d.ts"
+      ],
+      "fake-store": [
+        "types/fake-store/index.d.ts"
+      ]
+    }
+  },
+  "peerDependenciesMeta": {
+    "@atomico/react": {
+      "optional": true
+    },
+    "@atomico/vue": {
+      "optional": true
+    }
+  }
 }
