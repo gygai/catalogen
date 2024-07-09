@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>YJS Catalog</title>
+    <link href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+            rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+    <link href="./src/page.css" rel="stylesheet"/>
+    <!--    <link rel="stylesheet" href="./src/page.css" />-->
+    <script async src="./src/index.tsx" type="module"></script>
+
+
+</head>
+
+<body>
+<y-store>
+    <y-party-provider room="default0" url="localhost:1999">
+        <div class="container mx-auto ">
+            <y-gallery id="gallery">
+                <product-card></product-card>
+            </y-gallery>
+        </div>
+    </y-party-provider>
+</y-store>
+
+
+ 
+<script type="module">
+    import * as Y from 'yjs'; 
+    import {connectFakeStore} from './src/index.js'; 
+    document.querySelector('y-gallery').items =  connectFakeStore(new Y.Doc(), 'items');
+   
+</script>
+
+
+</body>
+</html>
+
+<!--     <y-liveblocks-provider ></y-liveblocks-provider>-->
+<!--<y-webrtc-provider room="my-screen-editor">-->
+
+<!--<script type="module" >-->
+<!--    import 'https://esm.sh/@iconify/iconify'-->
+<!--    import  'https://cdn.skypack.dev/@iconify/iconify'-->
+<!--    import 'https://esm.sh/tailwindcss'-->
+<!--    import * as tailwindcss from 'https://esm.sh/tailwindcss'-->
+<!--    tailwindcss.config = {-->
+<!--        theme: {-->
+<!--            extend: {-->
+<!--                colors: {-->
+<!--                    clifford: '#da373d',-->
+<!--                }-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+ 

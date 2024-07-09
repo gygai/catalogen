@@ -1,0 +1,17 @@
+{
+  "name": "catalogen",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "packageManager": "pnpm@9.4.0",
+  "scripts": {
+    "dev": "pnpm  --stream --if-present run dev  ",
+    "build": "pnpm --if-present run build ",
+    "serve": "pnpm --if-present run serve ",
+    "centralize": "pnpm --if-present centralize",
+    "publish": "pnpm --filter publish --access public --tag beta"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

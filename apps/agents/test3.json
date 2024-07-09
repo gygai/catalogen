@@ -1,0 +1,102 @@
+[
+    {
+        "id": 205988628,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky loafers in cream with fringe detail",
+        "href": "asos-design/asos-design-chunky-loafers-in-cream-with-fringe-detail/prd/205988628#colourWayId-205988635",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-loafers-in-cream-with-fringe-detail/205988628-1-cream",
+        "imageAlt": "ASOS DESIGN chunky loafers in cream with fringe detail",
+        "price": "$69.99",
+        "color": "CREAM"
+    },
+    {
+        "id": 205988872,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky loafers in brown faux leather with gum sole",
+        "href": "asos-design/asos-design-chunky-loafers-in-brown-faux-leather-with-gum-sole/prd/205988872#colourWayId-205988873",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-loafers-in-brown-faux-leather-with-gum-sole/205988872-1-brown",
+        "imageAlt": "ASOS DESIGN chunky loafers in brown faux leather with gum sole",
+        "price": "$56.99",
+        "color": "BROWN"
+    },
+    {
+        "id": 206088628,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky lace up shoes in black",
+        "href": "asos-design/asos-design-chunky-lace-up-shoes-in-black/prd/206088628#colourWayId-206088629",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-lace-up-shoes-in-black/206088628-1-black",
+        "imageAlt": "ASOS DESIGN chunky lace up shoes in black",
+        "price": "$59.99",
+        "color": "Black"
+    },
+    {
+        "id": 206088683,
+        "category": "shoes",
+        "name": "ASOS DESIGN strap sandals in brown weave",
+        "href": "asos-design/asos-design-strap-sandals-in-brown-weave/prd/206088683#colourWayId-206088684",
+        "imageSrc": "images.asos-media.com/products/asos-design-strap-sandals-in-brown-weave/206088683-1-brown",
+        "imageAlt": "ASOS DESIGN strap sandals in brown weave",
+        "price": "$34.99",
+        "color": "BROWN"
+    },
+    {
+        "id": 205845512,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky loafer in black with natural weave",
+        "href": "asos-design/asos-design-chunky-loafer-in-black-with-natural-weave/prd/205845512#colourWayId-205845513",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-loafer-in-black-with-natural-weave/205845512-1-black",
+        "imageAlt": "ASOS DESIGN chunky loafer in black with natural weave",
+        "price": "$59.99",
+        "color": "Black"
+    },
+    {
+        "id": 205539109,
+        "category": "shoes",
+        "name": "Nike Dunk Low Retro sneakers in black and white",
+        "href": "nike/nike-dunk-low-retro-sneakers-in-black-and-white/prd/205539109#colourWayId-205539110",
+        "imageSrc": "images.asos-media.com/products/nike-dunk-low-retro-sneakers-in-black-and-white/205539109-1-black",
+        "imageAlt": "Nike Dunk Low Retro sneakers in black and white",
+        "price": "$115.00",
+        "color": "Black"
+    },
+    {
+        "id": 206013839,
+        "category": "shoes",
+        "name": "Nike Air Force 1 '07 sneakers in brown and off white",
+        "href": "nike/nike-air-force-1-07-sneakers-in-brown-and-off-white/prd/206013839#colourWayId-206013860",
+        "imageSrc": "images.asos-media.com/products/nike-air-force-1-07-sneakers-in-brown-and-off-white/206013839-1-brown",
+        "imageAlt": "Nike Air Force 1 '07 sneakers in brown and off white",
+        "price": "$125.00",
+        "color": "BROWN"
+    },
+    {
+        "id": 205744149,
+        "category": "shoes",
+        "name": "Converse Chuck 70 Marquis mixed materials sneakers in tan",
+        "href": "converse/converse-chuck-70-marquis-mixed-materials-sneakers-in-tan/prd/205744149#colourWayId-205744150",
+        "imageSrc": "images.asos-media.com/products/converse-chuck-70-marquis-mixed-materials-sneakers-in-tan/205744149-1-tan",
+        "imageAlt": "Converse Chuck 70 Marquis mixed materials sneakers in tan",
+        "price": "$100.00",
+        "color": "TAN"
+    },
+    {
+        "id": 205744171,
+        "category": "shoes",
+        "name": "Converse Chuck 70 Marquis mixed materials sneakers in white with gray details",
+        "href": "converse/converse-chuck-70-marquis-mixed-materials-sneakers-in-white-with-gray-details/prd/205744171#colourWayId-205744172",
+        "imageSrc": "images.asos-media.com/products/converse-chuck-70-marquis-mixed-materials-sneakers-in-white-with-gray-details/205744171-1-white",
+        "imageAlt": "Converse Chuck 70 Marquis mixed materials sneakers in white with gray details",
+        "price": "$100.00",
+        "color": "WHITE"
+    },
+    {
+        "id": 205744477,
+        "category": "shoes",
+        "name": "Converse Pro Blaze Ox sneakers in white",
+        "href": "converse/converse-pro-blaze-ox-sneakers-in-white/prd/205744477#colourWayId-205744478",
+        "imageSrc": "images.asos-media.com/products/converse-pro-blaze-ox-sneakers-in-white/205744477-1-white",
+        "imageAlt": "Converse Pro Blaze Ox sneakers in white",
+        "price": "$80.00",
+        "color": "WHITE"
+    }
+]

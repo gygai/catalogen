@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "dev": "deno run  --allow-read --allow-env --allow-net --watch login.tsx"
+  },
+  "imports": {
+    "preact/jsx-runtime": "https://esm.sh/preact/jsx-runtime?dts",
+    "preact/jsx-dev-runtime": "https://esm.sh/preact/jsx-dev-runtime?dts"
+  },
+  "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "npm:hono/jsx"
+  }
+
+}

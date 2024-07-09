@@ -1,0 +1,291 @@
+Sure, here are the converted products in the desired format:
+
+```json
+[
+    {
+        "id": 206044385,
+        "category": "shoes",
+        "name": "Converse Star Player 76 Hi sneakers in burgundy",
+        "href": "converse/converse-star-player-76-hi-sneakers-in-burgundy/prd/206044385#colourWayId-206044409",
+        "imageSrc": "images.asos-media.com/products/converse-star-player-76-hi-sneakers-in-burgundy/206044385-1-burgundy",
+        "imageAlt": "Converse Star Player 76 Hi sneakers in burgundy",
+        "price": "$80.00",
+        "color": "Burgundy"
+    },
+    {
+        "id": 206240763,
+        "category": "shoes",
+        "name": "adidas Originals Gazelle sneakers in blue",
+        "href": "adidas-originals/adidas-originals-gazelle-sneakers-in-blue/prd/206240763#colourWayId-206240764",
+        "imageSrc": "images.asos-media.com/products/adidas-originals-gazelle-sneakers-in-blue/206240763-1-blue",
+        "imageAlt": "adidas Originals Gazelle sneakers in blue",
+        "price": "$100.00",
+        "color": "BLUE"
+    },
+    {
+        "id": 206333726,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky lace up shoes in black",
+        "href": "asos-design/asos-design-chunky-lace-up-shoes-in-black/prd/206333726#colourWayId-206333727",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-lace-up-shoes-in-black/206333726-1-black",
+        "imageAlt": "ASOS DESIGN chunky lace up shoes in black",
+        "price": "$52.99",
+        "color": "Black"
+    },
+    {
+        "id": 204464479,
+        "category": "shoes",
+        "name": "Timberland premium 6inch boots in wheat tan nubuck",
+        "href": "timberland/timberland-premium-6inch-boots-in-wheat-tan-nubuck/prd/204464479#colourWayId-204464495",
+        "imageSrc": "images.asos-media.com/products/timberland-premium-6inch-boots-in-wheat-tan-nubuck/204464479-1-beige",
+        "imageAlt": "Timberland premium 6inch boots in wheat tan nubuck",
+        "price": "$214.00",
+        "color": "BEIGE"
+    },
+    {
+        "id": 206044386,
+        "category": "shoes",
+        "name": "Converse Pro Blaze Classic Ox sneakers in brown",
+        "href": "converse/converse-pro-blaze-classic-ox-sneakers-in-brown/prd/206044386#colourWayId-206044410",
+        "imageSrc": "images.asos-media.com/products/converse-pro-blaze-classic-ox-sneakers-in-brown/206044386-1-charcoal",
+        "imageAlt": "Converse Pro Blaze Classic Ox sneakers in brown",
+        "price": "$80.00",
+        "color": "CHARCOAL"
+    },
+    {
+        "id": 206247632,
+        "category": "shoes",
+        "name": "adidas Originals Handball Spezial sneakers in light blue and orange",
+        "href": "adidas-originals/adidas-originals-handball-spezial-sneakers-in-light-blue-and-orange/prd/206247632#colourWayId-206247640",
+        "imageSrc": "images.asos-media.com/products/adidas-originals-handball-spezial-sneakers-in-light-blue-and-orange/206247632-1-lightblue",
+        "imageAlt": "adidas Originals Handball Spezial sneakers in light blue and orange",
+        "price": "$110.00",
+        "color": "LIGHT BLUE"
+    },
+    {
+        "id": 206250036,
+        "category": "shoes",
+        "name": "adidas Performance Dropset 3 sneakers in black",
+        "href": "adidas-performance/adidas-performance-dropset-3-sneakers-in-black/prd/206250036#colourWayId-206250055",
+        "imageSrc": "images.asos-media.com/products/adidas-performance-dropset-3-sneakers-in-black/206250036-1-black",
+        "imageAlt": "adidas Performance Dropset 3 sneakers in black",
+        "price": "$130.00",
+        "color": "Black"
+    },
+    {
+        "id": 206250056,
+        "category": "shoes",
+        "name": "adidas Performance Dropset 3 sneakers in white",
+        "href": "adidas-performance/adidas-performance-dropset-3-sneakers-in-white/prd/206250056#colourWayId-206250075",
+        "imageSrc": "images.asos-media.com/products/adidas-performance-dropset-3-sneakers-in-white/206250056-1-white",
+        "imageAlt": "adidas Performance Dropset 3 sneakers in white",
+        "price": "$130.00",
+        "color": "WHITE"
+    },
+    {
+        "id": 206946230,
+        "category": "shoes",
+        "name": "Converse Star Player 76 sneakers in brown",
+        "href": "converse/converse-star-player-76-sneakers-in-brown/prd/206946230#colourWayId-206946231",
+        "imageSrc": "images.asos-media.com/products/converse-star-player-76-sneakers-in-brown/206946230-1-brown",
+        "imageAlt": "Converse Star Player 76 sneakers in brown",
+        "price": "$75.00",
+        "color": "BROWN"
+    },
+    {
+        "id": 205652189,
+        "category": "shoes",
+        "name": "Converse Chuck 70 Hi sneakers in elm",
+        "href": "converse/converse-chuck-70-hi-sneakers-in-elm/prd/205652189#colourWayId-205652220",
+        "imageSrc": "images.asos-media.com/products/converse-chuck-70-hi-sneakers-in-elm/205652189-1-midgreen",
+        "imageAlt": "Converse Chuck 70 Hi sneakers in elm",
+        "price": "$102.00",
+        "color": "MID GREEN"
+    },
+    {
+        "id": 206691976,
+        "category": "shoes",
+        "name": "Fred Perry B721 leather sneakers in white",
+        "href": "fred-perry/fred-perry-b721-leather-sneakers-in-white/prd/206691976#colourWayId-206691994",
+        "imageSrc": "images.asos-media.com/products/fred-perry-b721-leather-sneakers-in-white/206691976-1-white",
+        "imageAlt": "Fred Perry B721 leather sneakers in white",
+        "price": "$140.00",
+        "color": "White"
+    },
+    {
+        "id": 206692011,
+        "category": "shoes",
+        "name": "Fred Perry B71 leather sneakers in black",
+        "href": "fred-perry/fred-perry-b71-leather-sneakers-in-black/prd/206692011#colourWayId-206692034",
+        "imageSrc": "images.asos-media.com/products/fred-perry-b71-leather-sneakers-in-black/206692011-1-black",
+        "imageAlt": "Fred Perry B71 leather sneakers in black",
+        "price": "$160.00",
+        "color": "Black"
+    },
+    {
+        "id": 203747966,
+        "category": "shoes",
+        "name": "Vans Sk8-Hi sneakers in walnut brown",
+        "href": "vans/vans-sk8-hi-sneakers-in-walnut-brown/prd/203747966#colourWayId-203747976",
+        "imageSrc": "images.asos-media.com/products/vans-sk8-hi-sneakers-in-walnut-brown/203747966-1-brown",
+        "imageAlt": "Vans Sk8-Hi sneakers in walnut brown",
+        "price": "$83.00",
+        "color": "BROWN"
+    },
+    {
+        "id": 205747038,
+        "category": "shoes",
+        "name": "ASOS DESIGN loafers in burgundy leather with tassel",
+        "href": "asos-design/asos-design-loafers-in-burgundy-leather-with-tassel/prd/205747038#colourWayId-205747045",
+        "imageSrc": "images.asos-media.com/products/asos-design-loafers-in-burgundy-leather-with-tassel/205747038-1-burgundy",
+        "imageAlt": "ASOS DESIGN loafers in burgundy leather with tassel",
+        "price": "$74.99",
+        "color": "Burgundy"
+    },
+    {
+        "id": 205798394,
+        "category": "shoes",
+        "name": "ASOS DESIGN driver loafers in stone suede",
+        "href": "asos-design/asos-design-driver-loafers-in-stone-suede/prd/205798394#colourWayId-205798396",
+        "imageSrc": "images.asos-media.com/products/asos-design-driver-loafers-in-stone-suede/205798394-1-stone",
+        "imageAlt": "ASOS DESIGN driver loafers in stone suede",
+        "price": "$59.99",
+        "color": "STONE"
+    },
+    {
+        "id": 205886527,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky sneakers with oversized laces",
+        "href": "asos-design/asos-design-chunky-sneakers-with-oversized-laces/prd/205886527#colourWayId-205886548",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-sneakers-with-oversized-laces/205886527-1-stone",
+        "imageAlt": "ASOS DESIGN chunky sneakers with oversized laces",
+        "price": "$52.99",
+        "color": "STONE"
+    },
+    {
+        "id": 205988788,
+        "category": "shoes",
+        "name": "ASOS DESIGN driving loafers in khaki suede",
+        "href": "asos-design/asos-design-driving-loafers-in-khaki-suede/prd/205988788#colourWayId-205988799",
+        "imageSrc": "images.asos-media.com/products/asos-design-driving-loafers-in-khaki-suede/205988788-1-khaki",
+        "imageAlt": "ASOS DESIGN driving loafers in khaki suede",
+        "price": "$59.99",
+        "color": "Khaki"
+    },
+    {
+        "id": 206149973,
+        "category": "shoes",
+        "name": "ASOS DESIGN lace up boat shoes in brown",
+        "href": "asos-design/asos-design-lace-up-boat-shoes-in-brown/prd/206149973#colourWayId-206149974",
+        "imageSrc": "images.asos-media.com/products/asos-design-lace-up-boat-shoes-in-brown/206149973-1-brown",
+        "imageAlt": "ASOS DESIGN lace up boat shoes in brown",
+        "price": "$64.99",
+        "color": "BROWN"
+    },
+    {
+        "id": 206902338,
+        "category": "shoes",
+        "name": "Bershka buckle strap sandals in black",
+        "href": "bershka/bershka-buckle-strap-sandals-in-black/prd/206902338#colourWayId-206902339",
+        "imageSrc": "images.asos-media.com/products/bershka-buckle-strap-sandals-in-black/206902338-1-black",
+        "imageAlt": "Bershka buckle strap sandals in black",
+        "price": "$49.90",
+        "color": "Black"
+    },
+    {
+        "id": 205834319,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky loafers in black with silver stars",
+        "href": "asos-design/asos-design-chunky-loafers-in-black-with-silver-stars/prd/205834319#colourWayId-205845378",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-loafers-in-black-with-silver-stars/205834319-1-black",
+        "imageAlt": "ASOS DESIGN chunky loafers in black with silver stars",
+        "price": "$44.99",
+        "color": "Black"
+    },
+    {
+        "id": 205837061,
+        "category": "shoes",
+        "name": "ASOS DESIGN lace-up boat shoes in white with chunky sole",
+        "href": "asos-design/asos-design-lace-up-boat-shoes-in-white-with-chunky-sole/prd/205837061#colourWayId-205837201",
+        "imageSrc": "images.asos-media.com/products/asos-design-lace-up-boat-shoes-in-white-with-chunky-sole/205837061-1-white",
+        "imageAlt": "ASOS DESIGN lace-up boat shoes in white with chunky sole",
+        "price": "$49.99",
+        "color": "WHITE"
+    },
+    {
+        "id": 205837425,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky lace-up boat shoes in black",
+        "href": "asos-design/asos-design-chunky-lace-up-boat-shoes-in-black/prd/205837425#colourWayId-205837505",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-lace-up-boat-shoes-in-black/205837425-1-black",
+        "imageAlt": "ASOS DESIGN chunky lace-up boat shoes in black",
+        "price": "$49.99",
+        "color": "Black"
+    },
+    {
+        "id": 205988566,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky lace up shoes with hardware in black",
+        "href": "asos-design/asos-design-chunky-lace-up-shoes-with-hardware-in-black/prd/205988566#colourWayId-205988615",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-lace-up-shoes-with-hardware-in-black/205988566-1-black",
+        "imageAlt": "ASOS DESIGN chunky lace up shoes with hardware in black",
+        "price": "$59.99",
+        "color": "Black"
+    },
+    {
+        "id": 205988798,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky mule loafers in beige",
+        "href": "asos-design/asos-design-chunky-mule-loafers-in-beige/prd/205988798#colourWayId-205988819",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-mule-loafers-in-beige/205988798-1-stone",
+        "imageAlt": "ASOS DESIGN chunky mule loafers in beige",
+        "price": "$56.99",
+        "color": "STONE"
+    },
+    {
+        "id": 205988829,
+        "category": "shoes",
+        "name": "ASOS DESIGN chunky loafers in white faux croc",
+        "href": "asos-design/asos-design-chunky-loafers-in-white-faux-croc/prd/205988829#colourWayId-205988843",
+        "imageSrc": "images.asos-media.com/products/asos-design-chunky-loafers-in-white-faux-croc/205988829-1-white",
+        "imageAlt": "ASOS DESIGN chunky loafers in white faux croc",
+        "price": "$61.99",
+        "color": "WHITE"
+    },
+    {
+        "id": 206240288,
+        "category": "shoes",
+        "name": "adidas Originals Gazelle sneakers in pink and blue",
+        "href": "adidas-originals/adidas-originals-gazelle-sneakers-in-pink-and-blue/prd/206240288#colourWayId-206240289",
+        "imageSrc": "images.asos-media.com/products/adidas-originals-gazelle-sneakers-in-pink-and-blue/206240288-1-pink",
+        "imageAlt": "adidas Originals Gazelle sneakers in pink and blue",
+        "price": "$100.00",
+        "color": "PINK"
+    },
+    {
+        "id": 206240444,
+        "category": "shoes",
+        "name": "adidas Originals Samba OG sneakers in white with yellow stripes",
+        "href": "adidas-originals/adidas-originals-samba-og-sneakers-in-white-with-yellow-stripes/prd/206240444#colourWayId-206240445",
+        "imageSrc": "images.asos-media.com/products/adidas-originals-samba-og-sneakers-in-white-with-yellow-stripes/206240444-1-white",
+        "imageAlt": "adidas Originals Samba OG sneakers in white with yellow stripes",
+        "price": "$100.00",
+        "color": "WHITE"
+    },
+    {
+        "id": 206240665,
+        "category": "shoes",
+        "name": "adidas Originals Gazelle Indoor sneakers in red and white",
+        "href": "adidas-originals/adidas-originals-gazelle-indoor-sneakers-in-red-and-white/prd/206240665#colourWayId-206240666",
+        "imageSrc": "images.asos-media.com/products/adidas-originals-gazelle-indoor-sneakers-in-red-and-white/206240665-1-red",
+        "imageAlt": "adidas Originals Gazelle Indoor sneakers in red and white",
+        "price": "$120.00",
+        "color": "RED"
+    },
+    {
+        "id": 205950120,
+        "category": "shoes",
+        "name": "ASOS DESIGN extreme chunky heeled boots",
+        "href": "asos-design/asos-design-extreme-chunky-heeled-boots/prd/205950120#colourWayId-205954342",
+        "imageSrc": "images.asos-media.com/products/asos-design-extreme-chunky-heeled-boots/205950120-1-cream",
+        "imageAlt": "ASOS DESIGN
