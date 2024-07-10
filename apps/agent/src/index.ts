@@ -9,7 +9,7 @@ const serviceKey = {
     },
     "appname": "a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540",
     "clientid": "sb-a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540",
-    "clientsecret": "5050fd60-3753-4d1f-a516-3c60da0c6b03$bgVfrP64MBsPr8L8qbHrK69NdDRMK1Dm6yxqkkyFpP4=",
+    "clientsecret": "***REMOVED***",
     "identityzone": "sapit-core-playground-vole",
     "identityzoneid": "2aaefd82-b1fe-4b56-aa22-851c0e271604",
     "url": "https://sapit-core-playground-vole.authentication.eu10.hana.ondemand.com"
