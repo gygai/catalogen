@@ -1,4 +1,4 @@
-import {openaiGP4o} from "./providers/openai.js";
+import {openaiGP4o} from "../providers/openai.js";
 import {streamObject} from "ai";
 import { z } from "zod";
 

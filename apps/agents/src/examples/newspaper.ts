@@ -8,7 +8,7 @@ import { TavilySearchAPIRetriever } from '@langchain/community/retrievers/tavily
 import { ChatOpenAI } from '@langchain/openai';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import {assign, createActor, fromPromise, log, setup} from 'xstate';
-import {langchain} from "./providers/langchain.js";
+import {langchain} from "../providers/langchain.js";
 
 interface AgentState {
     topic: string;
@@ -39,7 +39,7 @@ async function search({ topic }: Pick<AgentState, 'topic'>): Promise<string> {
 async function curate(
     input: Pick<AgentState, 'topic' | 'searchResults'>
 ): Promise<string> {
-    const response = await model().invoke(
+    const response = await (await model()).invoke(
         [
             new SystemMessage(
                 `You are a personal newspaper editor. 
@@ -83,7 +83,7 @@ async function critique(
        The feedback is only for you to see and will be removed from the final article.
     `.replace(/\s+/g, ' ');
     }
-    const response = await model().invoke([
+    const response = await (await model()).invoke([
         new SystemMessage(
             `You are a personal newspaper writing critique. Your sole purpose is to provide short feedback on a written 
       article so the writer will know what to fix.       
@@ -107,7 +107,7 @@ async function critique(
 async function write(
     input: Pick<AgentState, 'searchResults' | 'topic'>
 ): Promise<string> {
-    const response = await model().invoke([
+    const response = await (await model()).invoke([
         new SystemMessage(
             `You are a personal newspaper writer. Your sole purpose is to write a well-written article about a 
       topic using a list of articles. Write 5 paragraphs in markdown.`.replace(
@@ -134,7 +134,7 @@ async function write(
 async function revise(
     input: Pick<AgentState, 'article' | 'critique'>
 ): Promise<string> {
-    const response = await model().invoke([
+    const response = await (await model()).invoke([
         new SystemMessage(
             `You are a personal newspaper editor. Your sole purpose is to edit a well-written article about a 
       topic based on given critique.`.replace(/\s+/g, ' ')
