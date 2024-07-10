@@ -85,7 +85,7 @@ const catalogMachine = setup({
 }}).createMachine({
     context: ({input: {store, products}}) => ({
         photos: store.getArray<UserPost>("posts"),
-        catalog: store.getArray<Product>("products"),
+        catalog: store.getArray<Product>("catalog"),
         analysis: store.getArray<Analysis>("analysis"),
         products: products,
         token: undefined 
@@ -148,7 +148,7 @@ const catalogMachine = setup({
     }
 } )
 
-export async function catalog(doc: Y.Doc) {
+export   function catalog(doc: Y.Doc) {
 
     const actor = createActor(catalogMachine, {
         logger: (msg) => console.debug(msg),
@@ -161,15 +161,20 @@ export async function catalog(doc: Y.Doc) {
     });
     
     actor.send({type: "user.login", token: "fake token"});
-     
 
-    await waitFor(actor, a=> a.matches("done"));
+    actor.getSnapshot().context.catalog.observe((event) => {
+        console.debug("actor:event", actor.getSnapshot().context.catalog.length);
+    })
     
-    console.log("=======================================");
-    console.log(doc.toJSON())
-    
-    return doc;
+    doc.getArray("catalog").observe((event) => {
+        console.debug("doc:event", doc.getArray("catalog").length);
+    })
+    return {
+        actor,
+        photos: actor.getSnapshot().context.photos,
+        catalog: actor.getSnapshot().context.catalog,
+        analysis:  actor.getSnapshot().context.analysis,
+    };
 }
+export default catalog;
 
-
-catalog(new Y.Doc());

@@ -3,8 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "require": "dist/index.cjs",
+
   "scripts": {
-    "dev": "tsx ./src/index.ts",
+    "dev": "tsx ./src/main.ts",
     "news": "tsx ./src/examples/newspaper.ts",
     "chat": "tsx ./src/examples/server.ts",
 
@@ -31,6 +35,8 @@
     "dotenv": "^16.4.5",
     "xstate": "^5.14.0",
     "yjs": "^13.6.18",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "agent" : "workspace:*"
+
   }
 }

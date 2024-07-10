@@ -14,7 +14,6 @@ export type Product = {
 }
 async function* fakeGetCatalog( {analysis, products}: {analysis: Y.Array<Analysis>, products:BaseRetriever}) {
     console.debug("say i generate catalog based on: ", analysis.toArray());
-    await new Promise((resolve) => setTimeout(resolve, 60));
 
     yield {
         type: 'catalog.add',
@@ -41,8 +40,7 @@ async function* fakeGetCatalog( {analysis, products}: {analysis: Y.Array<Analysi
         "color": "Black"
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 60));
-
+ 
 }
 
 export default fakeGetCatalog
