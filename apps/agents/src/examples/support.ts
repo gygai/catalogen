@@ -1,9 +1,7 @@
-import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { createActor, log, setup } from 'xstate';
-import {AIAdapter, createAgent, fromDecision} from "@statelyai/agent";
-import {LanguageModel} from "ai";
-import {openaiGP4o} from "./providers/openai.js";
+import { createAgent, fromDecision} from "@statelyai/agent";
+import {openaiGP4o} from "../providers/openai.js";
  
 const agent = createAgent({
     name: 'support-agent',

@@ -3,7 +3,7 @@ import { openai } from '@ai-sdk/openai';
 import { CoreMessage, streamText } from 'ai';
 import {config} from 'dotenv';
 import * as readline from 'node:readline/promises';
-import {openaiGP4o} from "./providers/openai.js";
+import {openaiGP4o} from "../providers/openai.js";
 
 
 const terminal = readline.createInterface({

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import {setup, createActor, assign} from 'xstate';
 import {createAgent, fromDecision} from "@statelyai/agent";
-import {openaiGP4o} from "./providers/openai.js";
+import {openaiGP4o} from "../providers/openai.js";
 import {config} from 'dotenv';
 config();
 

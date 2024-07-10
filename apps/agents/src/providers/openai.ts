@@ -1,5 +1,6 @@
 import {createOpenAI} from "@ai-sdk/openai";
 import {config} from 'dotenv';
+import {getAccessToken} from "./sap-token.js";
 config();
 
 //convert to ts
@@ -15,39 +16,6 @@ const apikeytoken
 const apiurl
  */
 
-async function getAccessToken() {
-    const creds = {
-        clientid: process.env.SAP_CLIENT_ID,
-        clientsecret: process.env.SAP_CLIENT_SECRET,
-        tokenurl: process.env.SAP_TOKEN_URL
-    }
-    // const response = await fetch(`${process.env.SAP_TOKEN_URL}/oauth/token?grant_type=client_credentials`,
-    //     {
-    //         method: 'POST',
-    //         headers: {
-    //             Authorization: `Basic ${Buffer.from(`${process.env.SAP_CLIENT_ID}:${process.env.SAP_CLIENT_SECRET}`).toString('base64')}`
-    //         },
-    //     });
-    //
-
-    console.debug("ai-creds" , creds, process.env.SAP_AI_API_URL)
-
-    const response = await fetch(`${creds.tokenurl}?grant_type=client_credentials`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Basic ${btoa(`${creds.clientid}:${creds.clientsecret}`)}`
-        },
-        body: JSON.stringify({
-            client_id: creds.clientid,
-            client_secret: creds.clientsecret,
-            grant_type: "client_credentials",
-        }),
-    });
-    const json = await response.json();
-    console.log("token-response" , json.access_token )
-     return json.access_token
-}
 
 
 const customFetch:typeof fetch=async (url, request) => {
