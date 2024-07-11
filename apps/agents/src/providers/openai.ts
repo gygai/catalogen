@@ -1,7 +1,5 @@
 import {createOpenAI} from "@ai-sdk/openai";
-import {config} from 'dotenv';
-import {getAccessToken} from "./sap-token.js";
-config();
+import {createTokenService} from "./sap-token.js";
 
 //convert to ts
 /*export CLIENT_ID=$(cat key.json | jq -r .clientid)
@@ -17,11 +15,13 @@ const apiurl
  */
 
 
-
+const tokenService = createTokenService({
+    env: process.env
+})
 const customFetch:typeof fetch=async (url, request) => {
      console.log('ai-request', url, request) 
     
-    const access_token = await getAccessToken();
+    const access_token = await tokenService.accessToken();
     request = request ?? {};
     const response=await  fetch(`${url}/?api-version=2023-05-15`,
         {
