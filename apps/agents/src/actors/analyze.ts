@@ -3,10 +3,8 @@ import {UserPost} from "./photos.js";
 import {z} from "zod";
 import {HumanMessage, SystemMessage} from "@langchain/core/messages";
 import {langchain} from "../providers/langchain.js";
-
-
-
-const FactSchema = z.object({
+ 
+export const FactSchema = z.object({
     title: z.string().describe("One word description of the characteristic e.g. color, the type of material, etc."),
     value: z.string().describe("Value of the characteristic e.g. red, leather, etc."),
     likelihood: z.number().describe("Likelihood the characteristic from 0 to 100 to the user preference"),
@@ -17,7 +15,7 @@ const FactSchema = z.object({
 })
 
 
-const CharacteristicsSchema = z.object({
+export const CharacteristicsSchema = z.object({
     characteristics: z.array(FactSchema) 
         .describe("List of characteristics extracted from the image")
 })
@@ -27,7 +25,7 @@ export type Analysis = z.infer<typeof FactSchema> &{
     time: Date;
 };
 
-export async function* fakeAnalyzePhotos({photos:posts}: {photos: Y.Array<UserPost>}):AsyncGenerator<Analysis> {
+export async function* getImageCharacteristics({photos:posts}: {photos: Y.Array<UserPost>}):AsyncGenerator<Analysis> {
     console.debug("say I analyze photos: ", posts.toArray());
     const model = await langchain();
 
@@ -55,12 +53,5 @@ export async function* fakeAnalyzePhotos({photos:posts}: {photos: Y.Array<UserPo
     }
 }
 
- 
- 
-
- 
-
- 
-
-
-export  default  fakeAnalyzePhotos
+  
+export  default  getImageCharacteristics

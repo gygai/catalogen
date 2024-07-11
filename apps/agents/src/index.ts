@@ -140,22 +140,14 @@ export   function catalog(doc: Y.Doc) {
     const actor = createActor(catalogMachine, {
         logger: (msg) => console.debug(msg),
         input: {store: doc, products: {} as BaseRetriever}
-    }).start();
+    })
     
 
     actor.subscribe((state) => {
         console.debug("state", state.value);
     });
     
-    actor.send({type: "user.login", token: "fake token"});
-
-    actor.getSnapshot().context.catalog.observe((event) => {
-        console.debug("actor:event", actor.getSnapshot().context.catalog.length);
-    })
-    
-    doc.getArray("catalog").observe((event) => {
-        console.debug("doc:event", doc.getArray("catalog").length);
-    })
+ 
     return {
         actor,
         photos: actor.getSnapshot().context.photos,
