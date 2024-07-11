@@ -1,4 +1,4 @@
-import {c, css, useEffect, useProp, useRef} from "atomico";
+import {c, css, useEffect, useProp, useRef, Component} from "atomico";
 import * as Y from 'yjs';
 import '@y-block/array'
 import {useProxySlot} from "@atomico/hooks/use-slot";
@@ -6,7 +6,11 @@ import type {AtomicoThis} from "atomico/types/dom";
 import {useSlot} from "@atomico/hooks";
 
 
-function gallery() {
+export interface GalleryProps{
+    items: Y.Array<any>;
+}
+ 
+export function gallery():Component<GalleryProps> {
     const refSlotTemplate = useRef();
     const Templates = useProxySlot<AtomicoThis>(refSlotTemplate, el => el instanceof HTMLElement) as (AtomicoThis & (new() => any))[];
     const  [ items ]  = useProp("items");
@@ -99,12 +103,12 @@ export const ProductCard =c(function ({name, price, imageSrc, imageAlt, href, co
 export const Gallery = c(gallery);
 
 
-export const Props = c(function ({props}) {
+export const YProps = c(function ({props}) {
     const refSlotTemplate = useRef();
     const Templates = useSlot<AtomicoThis>(refSlotTemplate, el => el instanceof Element);
 
     useEffect(() => {
-        console.debug("YProps:reflecting properties", {props})
+        console.debug("YProps:reflecting properties", {props, Templates})
         Templates.forEach((Template) => {
             Object.assign(Template, props)
         })

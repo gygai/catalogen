@@ -8,10 +8,10 @@ import {
     setup, waitFor
 } from "xstate";
 import {type BaseRetriever} from "@langchain/core/retrievers";
-import fakeGetUserPhotos from "./actors/photos.js";
+import fakeGetUserPhotos, {UserPost} from "./actors/photos.js";
 import fakeLogin from "./actors/login.js";
 import fakeAnalyzePhotos, {Analysis} from "./actors/analyze.js";
-import fakeGetCatalog from "./actors/catalog.js";
+import fakeGetCatalog, {Product} from "./actors/catalog.js";
 
 interface AgentState {
     photos: Y.Array<UserPost>,
@@ -19,19 +19,6 @@ interface AgentState {
     products: BaseRetriever,
     catalog: Y.Array<Product>,
     token?: string
-}
-type UserPost = {
-    href: string
-}
-type Product = {
-    id: number,
-    category: string,
-    name: string,
-    href: string,
-    imageSrc: string,
-    imageAlt: string,
-    price: string,
-    color: string
 }
  
  
@@ -85,7 +72,7 @@ const catalogMachine = setup({
 }}).createMachine({
     context: ({input: {store, products}}) => ({
         photos: store.getArray<UserPost>("posts"),
-        catalog: store.getArray<Product>("products"),
+        catalog: store.getArray<Product>("catalog"),
         analysis: store.getArray<Analysis>("analysis"),
         products: products,
         token: undefined 
@@ -148,7 +135,7 @@ const catalogMachine = setup({
     }
 } )
 
-export async function catalog(doc: Y.Doc) {
+export   function catalog(doc: Y.Doc) {
 
     const actor = createActor(catalogMachine, {
         logger: (msg) => console.debug(msg),
@@ -161,15 +148,20 @@ export async function catalog(doc: Y.Doc) {
     });
     
     actor.send({type: "user.login", token: "fake token"});
-     
 
-    await waitFor(actor, a=> a.matches("done"));
+    actor.getSnapshot().context.catalog.observe((event) => {
+        console.debug("actor:event", actor.getSnapshot().context.catalog.length);
+    })
     
-    console.log("=======================================");
-    console.log(doc.toJSON())
-    
-    return doc;
+    doc.getArray("catalog").observe((event) => {
+        console.debug("doc:event", doc.getArray("catalog").length);
+    })
+    return {
+        actor,
+        photos: actor.getSnapshot().context.photos,
+        catalog: actor.getSnapshot().context.catalog,
+        analysis:  actor.getSnapshot().context.analysis,
+    };
 }
+export default catalog;
 
-
-catalog(new Y.Doc());

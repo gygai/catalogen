@@ -1,23 +1,23 @@
 import "./styles.css";
-import { createRoot } from "react-dom/client";
-import { useState, useMemo } from "react";
-import Lobby from "./components/Lobby";
-import Editor from "./components/Editor";
+import type {GalleryElement} from "@y-block/gallery";
+import YProvider from "y-partykit/provider";
+import * as Y from "yjs";
+import '@y-block/gallery';
+ 
+ 
 
-function getRandomColor() {
-  const colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink"];
-  return colors[Math.floor(Math.random() * colors.length)];
+export function setupCatalog(element: GalleryElement) {
+    const url = "localhost:1999";
+    const room  = "default";
+    const provider= new YProvider(url, room,  new Y.Doc(), {
+        connect: true,
+        disableBc: false,
+    })
+
+    element.items = provider.doc.getArray("catalog");
+
+
 }
 
-function App() {
-  const [currentRoom, setCurrentRoom] = useState("default");
-  const userColor = useMemo(() => getRandomColor(), []);
-  return (
-    <main>
-      <Editor room={currentRoom} userColor={userColor} key={currentRoom} />
-      <Lobby currentRoom={currentRoom} setCurrentRoom={setCurrentRoom} />
-    </main>
-  );
-}
 
-createRoot(document.getElementById("app")!).render(<App />);
+setupCatalog(document.querySelector("#gallery") as GalleryElement);
