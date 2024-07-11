@@ -1,7 +1,13 @@
-import {assign, createActor, createMachine, emit, fromCallback, fromPromise, log, waitFor} from "xstate";
-import {config} from 'dotenv';
-
-config();
+import {
+    assign,
+    createActor,
+    createMachine,
+    emit,
+    fromCallback,
+    fromPromise, InputFrom,
+    log,
+    waitFor
+} from "xstate";
 
 export async function fetchToken({input: {creds}}: {
     input: { creds: { clientid: string, clientsecret: string, tokenurl: string } }
@@ -27,14 +33,26 @@ const tokenMachine = createMachine({
     id: 'token',
     initial: 'loading',
 
-    context: {
-        token: null,
-        creds: {
-            clientid: process.env.SAP_CLIENT_ID,
-            clientsecret: process.env.SAP_CLIENT_SECRET,
-            tokenurl: process.env.SAP_TOKEN_URL
+    types: {
+        context: {} as {
+            token?: string,
+            creds: {
+                clientid: string,
+                clientsecret: string,
+                tokenurl: string
+            }
+        },
+        input: {} as {
+            env: typeof process.env
         }
     },
+    context: ({input: {env}}) => ({
+        creds: {
+            clientid: env.SAP_CLIENT_ID!,
+            clientsecret: env.SAP_CLIENT_SECRET!,
+            tokenurl: env.SAP_TOKEN_URL!
+        }
+    }),
     states: {
         loading: {
             invoke: {
@@ -46,7 +64,7 @@ const tokenMachine = createMachine({
                     target: 'success',
                     actions: [assign({
                         token: ({event}) => event.output
-                    }) ]
+                    })]
                 },
                 onError: {target: 'failure', actions: [log((event) => event)]}
             }
@@ -84,12 +102,24 @@ const tokenMachine = createMachine({
     }
 })
 
-
-const tokenService = createActor(tokenMachine)
-
-export async function getAccessToken(): Promise<string> {
-    tokenService.start();
-
-    const {context: {token}} = await waitFor(tokenService, state => state.matches('success'))
-    return token!;
+export function createTokenService(input: InputFrom<typeof tokenMachine> = {
+    env: process.env
+}) {
+    const actor = createActor(tokenMachine, {
+        input
+    })
+ 
+    return {
+         actor: actor.start(),
+         accessToken: async () => {
+             const {context: {token}} = await waitFor(actor, state => state.matches('success'))
+             return token!;
+         }
+    }
 }
+
+export function getAccessToken(env=process.env) {
+    return createTokenService({env}).accessToken()
+}
+ 
+export default tokenMachine;
