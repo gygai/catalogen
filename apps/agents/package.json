@@ -7,6 +7,21 @@
   "module": "src/index.ts",
   "require": "dist/index.cjs",
 
+  
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    },
+    "./catalog": {
+      "import": "./src/actors/catalog.ts",
+        "require": "./dist/catalog.cjs"
+    },
+    "./analytics": {
+      "import": "./src/analyze.ts",
+      "require": "./dist/analyze.cjs"
+    }
+  },
   "scripts": {
     "dev": "tsx ./src/main.ts",
     "news": "tsx ./src/examples/newspaper.ts",

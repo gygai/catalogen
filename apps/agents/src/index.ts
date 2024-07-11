@@ -8,10 +8,10 @@ import {
     setup, waitFor
 } from "xstate";
 import {type BaseRetriever} from "@langchain/core/retrievers";
-import fakeGetUserPhotos from "./actors/photos.js";
+import fakeGetUserPhotos, {UserPost} from "./actors/photos.js";
 import fakeLogin from "./actors/login.js";
 import fakeAnalyzePhotos, {Analysis} from "./actors/analyze.js";
-import fakeGetCatalog from "./actors/catalog.js";
+import fakeGetCatalog, {Product} from "./actors/catalog.js";
 
 interface AgentState {
     photos: Y.Array<UserPost>,
@@ -19,19 +19,6 @@ interface AgentState {
     products: BaseRetriever,
     catalog: Y.Array<Product>,
     token?: string
-}
-type UserPost = {
-    href: string
-}
-type Product = {
-    id: number,
-    category: string,
-    name: string,
-    href: string,
-    imageSrc: string,
-    imageAlt: string,
-    price: string,
-    color: string
 }
  
  
