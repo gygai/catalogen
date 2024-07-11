@@ -1,8 +1,10 @@
 
 export type UserPost = {
-    href: string
+    href: string;
+    text?: string;
+
 }
-export async function* fakeGetUserPhotos({token} :{token:string}){
+export async function* fakeGetUserPhotos({token} :{token:string}):AsyncGenerator<UserPost>{
     console.debug("say i fetch user photos", token);
     yield {href: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"};
     yield {href: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"};
