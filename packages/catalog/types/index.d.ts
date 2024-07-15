@@ -1,6 +1,7 @@
 import { Gallery, GalleryProps, ProductCard, YProps } from "./element";
 import { Props } from "atomico";
 import { AtomicoThis, JSXElement } from "atomico/types/dom";
+import '@y-block/array';
 export { Gallery } from "./element";
 export * from './fake-store';
 export type GalleryElement = AtomicoThis<GalleryProps, typeof Gallery>;

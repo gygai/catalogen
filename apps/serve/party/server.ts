@@ -3,7 +3,7 @@ import { onConnect, type YPartyKitOptions } from "y-partykit";
 import type { Doc } from "yjs";
 import * as Y from "yjs";
 import generateCatalog from "agent";
-export default class EditorServer implements Party.Server {
+ export default class EditorServer implements Party.Server {
   yjsOptions: YPartyKitOptions = {};
   catalog?: Y.Array<any>;
   constructor(public room: Party.Room) {}
@@ -25,7 +25,9 @@ export default class EditorServer implements Party.Server {
 
     this.catalog = this.catalog || connectCatalog(doc)
     function connectCatalog(doc: Doc) {
-      const {catalog} =generateCatalog(doc);
+      const {catalog,start, actor} =  generateCatalog(doc);
+      start()
+      actor.send({type: "user.login", token: "fake token"})
         catalog.observe((event) => {
             console.log("catalog:event", catalog.length);
         });

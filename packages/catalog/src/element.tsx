@@ -1,6 +1,5 @@
 import {c, css, useEffect, useProp, useRef, Component} from "atomico";
 import * as Y from 'yjs';
-import '@y-block/array'
 import {useProxySlot} from "@atomico/hooks/use-slot";
 import type {AtomicoThis} from "atomico/types/dom";
 import {useSlot} from "@atomico/hooks";
@@ -57,13 +56,13 @@ gallery.styles = css`
 
 
 
-export const ProductCard =c(function ({name, price, imageSrc, imageAlt, href, color}) {
+export const ProductCard =c(function ({name, price, image, summary, href, spec}) {
 
     return <host shadowDom>
-        <div class={"group relative"}>
+        <div class={"group relative ease-in-out duration-300 "}>
             <div
-                class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                <img src={imageSrc} alt={imageAlt}
+                class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 transition-all ">
+                <img src={image} alt={summary}
                      class="h-full w-full object-cover object-center lg:h-full lg:w-full"/>
             </div>
 
@@ -75,7 +74,7 @@ export const ProductCard =c(function ({name, price, imageSrc, imageAlt, href, co
                             {name}
                         </a>
                     </h3>
-                    <p class="mt-1 text-sm text-gray-500">{color}</p>
+                    <p class="mt-1 text-sm text-gray-500">{spec}</p>
                 </div>
                 <p class="text-sm font-medium text-gray-900">{price}</p>
             </div>
@@ -87,15 +86,37 @@ export const ProductCard =c(function ({name, price, imageSrc, imageAlt, href, co
 		@tailwind components;
 		@tailwind utilities;
 		@tailwind screens;
+        
+        :host {
+            @apply block;
+        }
     `,
 
     props: {
-        name: String,
-        price: String,
-        imageSrc: String,
-        imageAlt: String,
-        href: String,
-        color: String
+        name: {
+            type: String,
+            reflect: true
+        },
+        price: {
+            type: String,
+            reflect: true
+        },
+        image: {
+            type: String,
+            reflect: true
+        },
+        summary: {
+            type: String,
+            reflect: true
+        },
+        href: {
+            type: String,
+            reflect: true
+        },
+        spec: {
+            type: String,
+            reflect: true
+        }
 
     }
 });

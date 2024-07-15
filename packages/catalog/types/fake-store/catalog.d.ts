@@ -1,3 +1,4 @@
+import data from './data.json';
 export declare const products: ({
     id: number;
     category: string;
@@ -17,4 +18,6 @@ export declare const products: ({
     color: string;
     category?: undefined;
 })[];
-export default products;
+export type Product = typeof data[0];
+declare const _default: Product[];
+export default _default;

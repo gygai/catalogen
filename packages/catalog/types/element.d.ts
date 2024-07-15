@@ -1,6 +1,5 @@
 import { Component } from "atomico";
 import * as Y from 'yjs';
-import '@y-block/array';
 export interface GalleryProps {
     items: Y.Array<any>;
 }
@@ -16,18 +15,18 @@ export declare namespace gallery {
 }
 export declare const ProductCard: import("atomico/types/dom").Atomico<{} & {
     name?: string;
-    color?: string;
+    summary?: string;
+    image?: string;
     price?: string;
-    imageSrc?: string;
-    imageAlt?: string;
     href?: string;
+    spec?: string;
 }, {} & {
     name?: string;
-    color?: string;
+    summary?: string;
+    image?: string;
     price?: string;
-    imageSrc?: string;
-    imageAlt?: string;
     href?: string;
+    spec?: string;
 }, {
     new (): HTMLElement;
     prototype: HTMLElement;
