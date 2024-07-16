@@ -23,7 +23,7 @@
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
     "xstate": "^5.14.0",
-    "y-partykit": "^0.0.27",
+    "y-partykit": "^0.0.29",
     "y-quill": "^0.1.5",
     "yjs": "^13.6.14",
     "zod": "^3.23.8"

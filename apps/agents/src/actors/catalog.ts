@@ -1,46 +1,53 @@
 import * as Y from "yjs";
 import type {BaseRetriever} from "@langchain/core/retrievers";
 import {Analysis} from "./analyze.js";
+import  { type Product, catalog} from "@y-block/gallery/fake-store/catalog";
+ export {type Product} from "@y-block/gallery/fake-store";
 
-export type Product = {
-    id: number,
-    category: string,
-    name: string,
-    href: string,
-    imageSrc: string,
-    imageAlt: string,
-    price: string,
-    color: string
+function shuffle(array:any[]) {
+ return array.toSorted(() => Math.random() - 0.5);
 }
-async function* fakeGetCatalog( {analysis, products}: {analysis: Y.Array<Analysis>, products:BaseRetriever}) {
+
+const fakeCatalog=catalog()["shoes"]
+
+function exclude(source: any[], exclude: any[]) {
+    for (const product of exclude) {
+        source = source.filter(({id}) => id !== product.id);
+    }
+    return source;
+}
+
+async function* fakeGetCatalog( {analysis, products, catalog, page}: {analysis: Y.Array<Analysis>, products:BaseRetriever, catalog:Y.Array<Product> , page: number}) {
     console.debug("say i generate catalog based on: ", analysis.toArray());
+      
+     const randomProducts = shuffle(fakeCatalog).slice(0, page);
+     const others=  exclude(fakeCatalog, randomProducts) ;
+     const randomProductsGroups = randomProducts.map((product, index) => ({
+         product,
+         index,
+         switches: Array(10).fill(0).map((_, i) => others [Math.floor(Math.random() * others.length)])
+     }))
 
-    yield {
-        type: 'catalog.add',
-        "id": 20,
-        "category": "women's clothing",
-        "name": "DANVOUY Womens T Shirt Casual Cotton Short",
-        "href": "https://fakestoreapi.com/products/category/undefined",
-        "imageSrc": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg",
-        "imageAlt": "95%Cotton,5%Spandex, Features: Casual, Short Sleeve, Letter Print,V-Neck,Fashion Tees, The fabric is soft and has some stretch., Occasion: Casual/Office/Beach/School/Home/Street. Season: Spring,Summer,Autumn,Winter.",
-        "price": "$12.99",
-        "color": "Black"
-    }
-    await new Promise((resolve) => setTimeout(resolve, 60));
-
-    yield {
-        type: 'catalog.add',
-        "id": 18,
-        "category": "women's clothing",
-        "name": "MBJ Women's Solid Short Sleeve Boat Neck V ",
-        "href": "https://fakestoreapi.com/products/category/undefined",
-        "imageSrc": "https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_.jpg",
-        "imageAlt": "95% RAYON 5% SPANDEX, Made in USA or Imported, Do Not Bleach, Lightweight fabric with great stretch for comfort, Ribbed on sleeves and neckline / Double stitching on bottom hem",
-        "price": "$9.85",
-        "color": "Black"
+    async function* switching(switches: any[], index: number, product:Product) {
+        for (const product of switches) {
+            yield {
+                ...product,
+                index
+            }
+            await new Promise((resolve) => setTimeout(resolve, 80));
+        }
+        yield {
+            ...product,
+            index
+        }
     }
 
+    for  (const {product, switches, index} of randomProductsGroups) {
+        yield* switching(switches, index, product);
  
+
+    }
+   
 }
 
-export default fakeGetCatalog
+export default fakeGetCatalog;

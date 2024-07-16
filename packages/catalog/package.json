@@ -105,6 +105,10 @@
     "./fake-store/catalog": {
       "types": "./types/fake-store/catalog.d.ts",
       "default": "./lib/fake-store/catalog.js"
+    },
+    "./fake-store/faker-experimental": {
+      "types": "./types/fake-store/faker-experimental.d.ts",
+      "default": "./lib/fake-store/faker-experimental.js"
     }
   },
   "typesVersions": {
@@ -138,6 +142,9 @@
       ],
       "fake-store": [
         "types/fake-store/index.d.ts"
+      ],
+      "fake-store/faker-experimental": [
+        "types/fake-store/faker-experimental.d.ts"
       ]
     }
   },

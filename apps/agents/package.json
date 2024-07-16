@@ -51,7 +51,8 @@
     "xstate": "^5.14.0",
     "yjs": "^13.6.18",
     "zod": "^3.23.8",
-    "agent" : "workspace:*"
+    "agent" : "workspace:*",
+    "@y-block/gallery": "workspace:*"
 
   }
 }

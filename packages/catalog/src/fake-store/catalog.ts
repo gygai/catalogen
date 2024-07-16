@@ -22,7 +22,14 @@ import data from './data.json';
 
 
 export type  Product = typeof data[0];
-export default  data.map(({image, ...product}) => ({
+
+function fixImageUrl({image, ...product}: Product){
+    return {
+        ...product,
+        image: `${image.startsWith('http')?'' : 'http://' }${image}`
+    }
+}
+export default  data.reverse().map(({image, ...product}) => ({
       ...product,
       image: `${image.startsWith('http')?'' : 'http://' }${image}`
     }
@@ -33,3 +40,13 @@ export default  data.map(({image, ...product}) => ({
     && categories !== "furniture"
 ) as Product[];
 
+export function catalog(): Record<Product["categories"], Product[]>{
+ return data
+        .map(fixImageUrl) 
+        .reduce((acc, item) => {
+            acc[item.categories] = [...(acc[item.categories] || []), item];
+            return acc;
+        }, {} as Record<string, Product[]>);
+
+}
+ 
