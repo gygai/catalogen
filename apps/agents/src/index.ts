@@ -10,7 +10,7 @@ import {
     PromiseSnapshot,
     setup,
     ErrorActorEvent,
-    Observer, InspectionEvent, StateValue
+    Observer, InspectionEvent, StateValue, ActorRefFrom
 } from "xstate";
 import {type BaseRetriever} from "@langchain/core/retrievers";
 import fakeGetUserPhotos, {UserPost} from "./actors/photos.js";
@@ -263,7 +263,7 @@ export function catalog(doc: Y.Doc) {
     };
 }
 
-
+export type CatalogService = ActorRefFrom<typeof catalogMachine>
 
 
 export default catalog;

@@ -92,6 +92,81 @@ importers:
         specifier: ^5.3.1
         version: 5.3.3(@types/node@20.14.10)
 
+  apps/qwik-app:
+    devDependencies:
+      '@builder.io/qwik':
+        specifier: ^1.7.1
+        version: 1.7.1(@types/node@20.14.10)(undici@5.28.4)
+      '@builder.io/qwik-city':
+        specifier: ^1.7.1
+        version: 1.7.1(@types/node@20.14.10)(rollup@4.18.0)
+      '@storefront-ui/tailwind-config':
+        specifier: ^2.5.1
+        version: 2.5.1(autoprefixer@10.4.19(postcss@8.4.39))(postcss@8.4.39)(tailwindcss@3.3.3(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.4.5)))
+      '@types/eslint':
+        specifier: ^8.56.10
+        version: 8.56.10
+      '@types/node':
+        specifier: ^20.12.7
+        version: 20.14.10
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^7.7.1
+        version: 7.16.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)
+      '@typescript-eslint/parser':
+        specifier: ^7.7.1
+        version: 7.16.0(eslint@8.57.0)(typescript@5.4.5)
+      '@y-block/gallery':
+        specifier: workspace:*
+        version: link:../../packages/catalog
+      agent:
+        specifier: workspace:*
+        version: link:../agents
+      autoprefixer:
+        specifier: ^10.4.14
+        version: 10.4.19(postcss@8.4.39)
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      eslint-plugin-qwik:
+        specifier: ^1.7.1
+        version: 1.7.1(eslint@8.57.0)
+      postcss:
+        specifier: ^8.4.31
+        version: 8.4.39
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.3
+      prettier-plugin-tailwindcss:
+        specifier: ^0.5.4
+        version: 0.5.14(prettier@3.3.3)
+      qwik-storefront-ui:
+        specifier: ^0.0.8
+        version: 0.0.8
+      tailwindcss:
+        specifier: 3.3.3
+        version: 3.3.3(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.4.5))
+      typescript:
+        specifier: 5.4.5
+        version: 5.4.5
+      undici:
+        specifier: '*'
+        version: 5.28.4
+      vite:
+        specifier: ^5.2.10
+        version: 5.3.3(@types/node@20.14.10)
+      vite-tsconfig-paths:
+        specifier: ^4.2.1
+        version: 4.3.2(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10))
+      y-partykit:
+        specifier: ^0.0.29
+        version: 0.0.29
+      yjs:
+        specifier: ^13.6.18
+        version: 13.6.18
+
   apps/serve:
     dependencies:
       '@ai-sdk/openai':
@@ -173,81 +248,6 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.5.3
-
-  apps/site/qwik-app:
-    devDependencies:
-      '@builder.io/qwik':
-        specifier: ^1.7.1
-        version: 1.7.1(@types/node@20.14.10)(undici@5.28.4)
-      '@builder.io/qwik-city':
-        specifier: ^1.7.1
-        version: 1.7.1(@types/node@20.14.10)(rollup@4.18.0)
-      '@storefront-ui/tailwind-config':
-        specifier: ^2.5.1
-        version: 2.5.1(autoprefixer@10.4.19(postcss@8.4.39))(postcss@8.4.39)(tailwindcss@3.3.3(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.4.5)))
-      '@types/eslint':
-        specifier: ^8.56.10
-        version: 8.56.10
-      '@types/node':
-        specifier: ^20.12.7
-        version: 20.14.10
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^7.7.1
-        version: 7.16.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)
-      '@typescript-eslint/parser':
-        specifier: ^7.7.1
-        version: 7.16.0(eslint@8.57.0)(typescript@5.4.5)
-      '@y-block/gallery':
-        specifier: workspace:*
-        version: link:../../../packages/catalog
-      agent:
-        specifier: workspace:*
-        version: link:../../agents
-      autoprefixer:
-        specifier: ^10.4.14
-        version: 10.4.19(postcss@8.4.39)
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      eslint-plugin-qwik:
-        specifier: ^1.7.1
-        version: 1.7.1(eslint@8.57.0)
-      postcss:
-        specifier: ^8.4.31
-        version: 8.4.39
-      prettier:
-        specifier: ^3.2.5
-        version: 3.3.3
-      prettier-plugin-tailwindcss:
-        specifier: ^0.5.4
-        version: 0.5.14(prettier@3.3.3)
-      qwik-storefront-ui:
-        specifier: ^0.0.8
-        version: 0.0.8
-      tailwindcss:
-        specifier: 3.3.3
-        version: 3.3.3(ts-node@10.9.2(@types/node@20.14.10)(typescript@5.4.5))
-      typescript:
-        specifier: 5.4.5
-        version: 5.4.5
-      undici:
-        specifier: '*'
-        version: 5.28.4
-      vite:
-        specifier: ^5.2.10
-        version: 5.3.3(@types/node@20.14.10)
-      vite-tsconfig-paths:
-        specifier: ^4.2.1
-        version: 4.3.2(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10))
-      y-partykit:
-        specifier: ^0.0.29
-        version: 0.0.29
-      yjs:
-        specifier: ^13.6.18
-        version: 13.6.18
 
   packages/catalog:
     dependencies:
