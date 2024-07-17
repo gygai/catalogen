@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live",
-    "deploy": "partykit deploy"
+    "deploy": "partykit deploy  --with-vars"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.34",
@@ -33,6 +33,9 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "partykit": "^0.0.100",
-    "typescript": "^5.4.2"
-  }
+    "typescript": "^5.4.2",
+    "@types/bun": "latest"
+  },
+  "module": "index.ts",
+  "type": "module"
 }

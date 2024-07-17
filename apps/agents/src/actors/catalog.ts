@@ -34,12 +34,16 @@ async function* fakeGetCatalog( {analysis, products, catalog, page}: {analysis: 
                 ...product,
                 index
             }
-            await new Promise((resolve) => setTimeout(resolve, 80));
+            await new Promise((resolve) => setTimeout(resolve, 150));
         }
+        await new Promise((resolve) => setTimeout(resolve, 150));
+
         yield {
             ...product,
             index
         }
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
     }
 
     for  (const {product, switches, index} of randomProductsGroups) {

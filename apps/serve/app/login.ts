@@ -1,4 +1,5 @@
 import PartySocket from "partysocket";
+import type {StoreElement} from "./store";
 
 export  class LoginButton extends HTMLElement {
      constructor() {

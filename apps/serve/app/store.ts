@@ -1,6 +1,16 @@
 import * as Y from "yjs";
 import YProvider from "y-partykit/provider";
 
+const storeLoadedEvent = (details:{
+    doc:Y.Doc;
+    provider:YProvider;
+} ) => new CustomEvent("store", {
+    bubbles: true,
+    composed: true,
+    detail: details
+});
+
+export type StoreLoaded = ReturnType<typeof storeLoadedEvent>;
 export class StoreElement extends HTMLElement {
 
     doc:Y.Doc;
@@ -12,7 +22,7 @@ export class StoreElement extends HTMLElement {
         return this.getAttribute("url") || document.location.host;
     }
     get room() {
-        return this.getAttribute("room") || "catalog";
+        return this.getAttribute("room") || "def";
     }
     constructor() {
         super();
@@ -29,7 +39,7 @@ export class StoreElement extends HTMLElement {
         this.provider.on("wsconnected", () => {
             console.log("store:wsconnected", this.url, this.room, "\tconnected:", this.provider.wsconnected , "\tdoc:loaded", this.doc.isLoaded, "\tdoc:synced", this.doc.isSynced);
         })
-        this.dispatchEvent(new Event("load"));
+        this.dispatchEvent(storeLoadedEvent({doc: this.doc, provider: this.provider}));
     }
 
 

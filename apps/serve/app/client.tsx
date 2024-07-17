@@ -5,6 +5,7 @@ import * as Y from "yjs";
 import '@y-block/gallery';
 import './store';
 import './login';
+import './analysis';
 import type {StoreElement} from "./store";
 
 

@@ -2,26 +2,32 @@
 import * as Y from "yjs";
 import {
     ActorRef,
-    assign, createActor,
-    EventObject, fromPromise, ActorSystem,
+    assign,
+    createActor,
+    EventObject,
+    fromPromise,
+    ActorSystem,
     PromiseSnapshot,
-    setup, waitFor, EventFrom, ActorRefFrom
+    setup,
+    ErrorActorEvent,
+    Observer, InspectionEvent, StateValue
 } from "xstate";
 import {type BaseRetriever} from "@langchain/core/retrievers";
 import fakeGetUserPhotos, {UserPost} from "./actors/photos.js";
 import fakeLogin from "./actors/login.js";
-import fakeAnalyzePhotos, {Analysis} from "./actors/analyze.js";
+import {fakeAnalyzePhotos,Analysis} from "./actors/analyze.js";
 import fakeGetCatalog, {Product} from "./actors/catalog.js";
-
+ 
 interface AgentState {
     photos: Y.Array<UserPost>,
     analysis: Y.Array<Analysis>,
     products: BaseRetriever,
     catalog: Y.Array<Product>,
+    error?: unknown;
+
     token?: string,
     page: number
 }
-
 
 type ActorPromise<TInput extends keyof AgentState> = {
     input: Required<Pick<AgentState, TInput>>
@@ -30,7 +36,17 @@ type ActorPromise<TInput extends keyof AgentState> = {
     signal: AbortSignal;
     emit: (emitted: EventObject) => void;
 }
-const catalogMachine = setup({
+
+const assignError= assign({
+    error: ( {event}:{event:ErrorActorEvent}) => event.error
+});
+
+const errorTransition= {
+    target: "error",
+    actions: [assignError]
+} as any
+
+const catalogMachineSetup = setup({
     types: {} as {
         context: AgentState,
         input: { store: Y.Doc, products: BaseRetriever }
@@ -54,13 +70,18 @@ const catalogMachine = setup({
             for await (const event of fakeGetUserPhotos(input)) {
                 console.log("event", event);
                 if (signal.aborted) return;
-                input.photos.push([event])
-            }
+                input.photos.doc!.transact(() => {
+                    input.photos.length > 20 && input.photos.delete(20, input.photos.length - 20);
+                    input.photos.insert( 0,[event]);
+                })            }
         }),
         analyzeUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"photos" | "analysis">) => {
-            for await (const event of fakeAnalyzePhotos(input)) {
-                if (signal.aborted) return;
-                input.analysis.push([event])
+            for await (const analysis of fakeAnalyzePhotos(input)) {
+                if (signal.aborted) return ;
+                input.analysis.doc!.transact(() => {
+                    input.analysis.length > 20 && input.analysis.delete(20, input.analysis.length - 20);
+                    input.analysis.insert( 0,[analysis]);
+                })
             }
         }),
         getCatalog: fromPromise(async ({
@@ -74,7 +95,9 @@ const catalogMachine = setup({
                 const deletedItems = input.catalog.slice(index, index + 1);
 
                 input.catalog.doc!.transact(() => {
-                    // input.catalog.length > index && input.catalog.delete(index, 1); 
+                    input.catalog.length > 20 && input.catalog.delete(100, input.catalog.length - 100);
+
+                    input.catalog.length > index && input.catalog.delete(index, 1); 
                     input.catalog.insert(index, [product]);
                     // input.catalog.insert(index, deletedItems);
                 })
@@ -83,7 +106,11 @@ const catalogMachine = setup({
         })
 
     }
-}).createMachine({
+})
+ 
+
+
+const catalogMachine = catalogMachineSetup.createMachine({
     context: ({input: {store, products}}) => ({
         photos: store.getArray<UserPost>("posts"),
         catalog: store.getArray<Product>("catalog"),
@@ -115,10 +142,12 @@ const catalogMachine = setup({
                 }),
                 onDone: {
                     target: "analyzeUserPhotos"
-                }
+                },
+                onError: errorTransition
             }
 
         },
+        
         analyzeUserPhotos: {
             invoke: {
                 src: "analyzeUserPhotos",
@@ -128,7 +157,14 @@ const catalogMachine = setup({
                 }),
                 onDone: {
                     target: "getCatalog"
+                },
+                onError: {
+                    target: "getCatalog",
+                    actions: assign({
+                        error: ( {event}:{event:ErrorActorEvent}) => event.error
+                    })
                 }
+
             }
         },
         getCatalog: {
@@ -143,7 +179,18 @@ const catalogMachine = setup({
                 }),
                 onDone: {
                     target: "done"
-                }
+                },
+                onError: errorTransition
+
+            }
+        },
+        error: {
+             on: {
+                'user.login': {
+                    actions: ['token.assign'],
+                    target: "getUserPhotos"
+                },
+                'generate': 'getCatalog'
             }
         },
         done: {
@@ -160,15 +207,50 @@ const catalogMachine = setup({
 
 export function catalog(doc: Y.Doc) {
 
+     const logger:Observer<InspectionEvent> = {
+            next: (value:InspectionEvent) =>  console.debug("inspect",  {
+                event: value.type,
+                root: value.rootId,
+                actorRef: value.actorRef.id,
+               
+            }),
+            error: (err:unknown) => console.error("inspect:error", err),
+            complete: () => console.debug("inspect:complete")
+        }
+        
+    const ystate =doc.getMap("state");
+    const savedState = ystate.get ('currentState');
+   const restoredState =  catalogMachine.resolveState({
+        value: savedState as StateValue || "idle" ,
+        context: {
+            photos: doc.getArray<UserPost>("posts"),
+            catalog: doc.getArray<Product>("catalog"),
+            analysis: doc.getArray<Analysis>("analysis"),
+            products: {} as BaseRetriever,
+            page: 12,
+            token: doc.getText("token")?.toJSON()
+        }
+    })
     const actor = createActor(catalogMachine, {
+        snapshot: restoredState,
         logger: (msg) => console.debug(msg),
+        inspect: logger,
         input: {store: doc, products: {} as BaseRetriever}
     })
 
 
 
     actor.subscribe((state) => {
-        console.debug("state", state.value);
+        console.debug("state", state.value , {
+            photos: state.context.photos.length,
+            analysis: state.context.analysis.length,
+            catalog: state.context.catalog.length,
+            error: state.context.error
+            })
+        
+        ystate.set("currentState", state.value);
+        
+        
     });
 
 
@@ -182,62 +264,7 @@ export function catalog(doc: Y.Doc) {
 }
 
 
-export class CatalogGenerator implements AgentState {
-    photos: Y.Array<UserPost>;
-    analysis: Y.Array<Analysis>;
-    products: BaseRetriever<Record<string, any>>;
-    catalog: Y.Array<Product>;
-    token?: string | undefined;
-    page: number;
-    actor: ActorRefFrom<typeof catalogMachine>
 
-    constructor(public doc: Y.Doc = new Y.Doc({
-        guid: "ctlg-" + Math.random().toString(36).slice(2, 8), 
-        autoLoad:true,
-        collectionid: "catalog"
-    }), autoStart:boolean=false) {
-        const {actor, catalog: ycatalog, photos, analysis} = catalog(doc);
-        this.photos = photos;
-        this.analysis = analysis;
-        this.catalog = ycatalog;
-        this.products = {} as BaseRetriever<Record<string, any>>;
-        this.page = 12;
-        this.token = undefined;
-        this.actor = actor;
-        autoStart && this.start();
-
-    }
-
-    start() {
-        return this.actor.start();
-    }
-
-    stop() {
-        return this.actor.stop();
-    }
-
-    login(token: string) {
-        this.actor.send({type: "user.login", token});
-    }
-
-    async send(event: EventFrom<typeof catalogMachine>) {
-        this.actor.send(event);
-
-    }
-
-    async waitForDone() {
-        return waitFor(this.actor, a => a.matches("done"));
-    }
-    
-     connect(doc: Y.Doc) {
-         this.doc.on("update", (update) => {
-                console.log("doc:update", update);
-                Y.applyUpdate(doc, update);
-          });
-     }
-
-
-}
 
 export default catalog;
 
