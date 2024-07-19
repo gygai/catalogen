@@ -37,8 +37,8 @@ export async function* getImageCharacteristics({photos:posts}: {photos: Y.Array<
             new HumanMessage("Here are a list of items I posted on social media."),
             ...posts.map(post => new HumanMessage({
                 "content": [
-                    {"type": "image_url", "image_url": {url: post.href}},
-                    {"type": "text", "text": post.text}
+                    {"type": "image_url", "image_url": {url: post.media_url}},
+                    {"type": "text", "text": post.caption}
                 ]
             })),
             new HumanMessage("can you please extract a list of characteristics that I favor ?. please include color, style, the type of material and type of  in the list of characteristics.")

@@ -109,6 +109,14 @@
     "./fake-store/faker-experimental": {
       "types": "./types/fake-store/faker-experimental.d.ts",
       "default": "./lib/fake-store/faker-experimental.js"
+    },
+    "./post": {
+      "types": "./types/post.d.ts",
+      "default": "./lib/post.js"
+    },
+    "./state": {
+      "types": "./types/state.d.ts",
+      "default": "./lib/state.js"
     }
   },
   "typesVersions": {
@@ -145,6 +153,12 @@
       ],
       "fake-store/faker-experimental": [
         "types/fake-store/faker-experimental.d.ts"
+      ],
+      "post": [
+        "types/post.d.ts"
+      ],
+      "state": [
+        "types/state.d.ts"
       ]
     }
   },

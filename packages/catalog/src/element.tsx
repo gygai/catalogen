@@ -91,6 +91,17 @@ export const ProductCard =c(function ({name, price, image, summary, href, spec})
             @apply block;
             display: inline-block;
         }
+        
+        img{
+            @apply transition-all;
+            @apply duration-300;
+            @apply ease-in-out;
+            @apply transform;
+            
+            
+        }
+        
+        
     `,
 
     props: {

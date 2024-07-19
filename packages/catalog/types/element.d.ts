@@ -15,16 +15,16 @@ export declare namespace gallery {
 }
 export declare const ProductCard: import("atomico/types/dom").Atomico<{} & {
     name?: string;
-    summary?: string;
-    image?: string;
     price?: string;
+    image?: string;
+    summary?: string;
     href?: string;
     spec?: string;
 }, {} & {
     name?: string;
-    summary?: string;
-    image?: string;
     price?: string;
+    image?: string;
+    summary?: string;
     href?: string;
     spec?: string;
 }, {

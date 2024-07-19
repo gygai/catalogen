@@ -20,6 +20,10 @@
     "./analytics": {
       "import": "./src/analyze.ts",
       "require": "./dist/analyze.cjs"
+    },
+    "./posts": {
+      "import": "./src/actors/photos.ts",
+      "require": "./dist/posts.cjs"
     }
   },
   "scripts": {

@@ -75,6 +75,7 @@ const catalogMachineSetup = setup({
                     input.photos.insert( 0,[event]);
                 })            }
         }),
+
         analyzeUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"photos" | "analysis">) => {
             for await (const analysis of fakeAnalyzePhotos(input)) {
                 if (signal.aborted) return ;
@@ -141,12 +142,19 @@ const catalogMachine = catalogMachineSetup.createMachine({
                     token: context.token!
                 }),
                 onDone: {
-                    target: "analyzeUserPhotos"
+                    target: "confirm"
                 },
                 onError: errorTransition
             }
 
         },
+        confirm: { 
+            on: {
+                'posts.confirm': 'getCatalog'
+            }
+        },
+            
+            
         
         analyzeUserPhotos: {
             invoke: {
@@ -277,4 +285,15 @@ export default catalog;
                 .send(event.delta.filter((e) => e.insert instanceof Array)[0]
                     .insert as EventObject)
         })
+        
+                confirmPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"confirm">) => {
+            return new Promise<void>((resolve) => {
+                input.confirm.observe((event) => {
+                    if (event.keysChanged.has("confirm")) {
+                        console.log("confirmPhotos:event", event.keysChanged.has("confirm"));
+                        resolve();
+                    }
+                })
+            })
+        }),
  */
