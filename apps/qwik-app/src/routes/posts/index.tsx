@@ -1,112 +1,54 @@
-import {DocumentHead, RequestHandler, routeLoader$} from "@builder.io/qwik-city";
+import {RequestHandler} from "@builder.io/qwik-city";
+ import {useProvider} from "~/routes/layout";
+ 
 
-import {component$, NoSerialize, noSerialize, useStore, useVisibleTask$} from '@builder.io/qwik';
-import YProvider from "y-partykit/provider";
-import * as Y from "yjs";
-import generateCatalog, {CatalogService} from "agent";
-import type {Product} from "agent/catalog";
-import Login, {Button} from "~/components/login";
-import {type UserPost} from "agent/posts";
-import PostsGallery from "~/components/posts";
- import {getProvider, useTokenUrl} from "~/routes/layout";
 
-export const useAccessToken =   routeLoader$(async ({ request, url, params}):{access_token:string} => {
-
-     const code = url.searchParams.get('code');
-    const {clientId, redirectUri, clientSecret} = await getProvider();
-
+export const onGet: RequestHandler = async ({ redirect, url,cookie,headers,sharedMap }) => {
+      
+    // Control caching for this request for best performance and to reduce hosting costs:
+    // https://qwik.dev/docs/caching/
+    const code = url.searchParams.get('code');
+    const {clientId, redirectUri, clientSecret} = await useProvider();
+    
     //exchange intagram code for token
     if (code) {
-        const url = 'https://api.instagram.com/oauth/access_token'
+        const tokenUrl = 'https://api.instagram.com/oauth/access_token'
         const options ={
             method: 'POST',
-            redirect: "manual",
 
             body: new URLSearchParams({
-            client_id: '362485702774061',
-            client_secret: clientSecret,
-            grant_type: 'authorization_code',
-            redirect_uri: 'https://local.pyzlo.com/posts',
-            code: code,
-        }),
-           headers:{
+                client_id: clientId,
+                client_secret: clientSecret,
+                grant_type: 'authorization_code',
+                redirect_uri: redirectUri(url.origin),
+                code: code,
+            }),
+            headers:{
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                 'accept': 'application/json',
-        }};
-        console.log('code',url, options);
-        const token = await fetch(url, options).then((res) => res.json());
+            }};
+        console.log('code',tokenUrl, options);
+        const token = await fetch(tokenUrl, options).then((res) => res.json());
+        token.token_type = "bearer";
+        // body.expires_in = body.expires_in;
+
+        // Calculate the `expires_at` Unix timestamp by adding `expires_in` to the current timestamp
+        const currentTimestampInSeconds = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
+        token.expires_at = currentTimestampInSeconds + token.expires_in || 60 * 30;
+        
         console.log('token', token);
+        cookie.set('i-access_token', token , { httpOnly: true, domain: url.hostname, secure: true, sameSite: 'strict'});
         //send token to the auth server
         //return access token to the client
-        return token;
     }
-    return {
-        access_token: 'fake token',
-        user: {
-            id: 'fake user id',
-            username: 'fake username',
-        },
-    }
-})
+     console.log('redirect', url);
+     
+    throw  redirect(302, url.origin);
 
- 
-
-export default component$(() => {
-    const store = useStore({
-        posts: noSerialize(new Y.Doc().getArray<UserPost>("photos")  ),
-        service:undefined as NoSerialize<CatalogService> | undefined
-    });
     
-    const accessToken = useAccessToken();
 
-    useVisibleTask$(async ({track}) => {
-        await import ('@y-block/gallery')
-        const room = 'gina'
-        const url = "localhost:1999";
-        const provider = new YProvider(url, room, new Y.Doc({
-            autoLoad: true,
-        }), {
-            connect: true,
-            disableBc: false,
-        })
-        const {start, actor, catalog, photos, analysis} = generateCatalog(provider.doc);
-        store.posts = noSerialize(photos);
-        store.service = noSerialize(actor);
-
-        start();
-        
-        track(()=> accessToken);
-        console.log('accessToken', accessToken.value);
-        store.service?.send({
-            type: "user.login" ,
-             token: accessToken.value.access_token
-        });
-        
-        return () => {
-            provider.disconnect();
-        }
-    })
-
-    return (<div >
-            <PostsGallery store={store}></PostsGallery> 
-        </div>
-    );
-});
-
-
-
-
-export const head: DocumentHead = {
-    title: "Genius Catalog",
-    meta: [
-        {
-            name: "description",
-            content: "Genius catalog prototype",
-        },
-    ],
 };
-
- 
+  
  
 /*
 https://api.instagram.com/oauth/access_token {

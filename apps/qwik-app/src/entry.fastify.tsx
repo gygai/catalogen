@@ -33,8 +33,8 @@ const start = async () => {
   const fastify = Fastify({
     logger: true,
     https:{
-        key: fs.readFileSync(`.keys/${HOST}/privkey.pem`),
-        cert: fs.readFileSync(`.keys/${HOST}/fullchain.pem`)
+        key: fs.readFileSync(`./.keys/${HOST}/privkey.pem`),
+        cert: fs.readFileSync(`./.keys/${HOST}/fullchain.pem`)
     }
   });
 

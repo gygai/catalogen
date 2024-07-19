@@ -13,7 +13,7 @@ import {
     Observer, InspectionEvent, StateValue, ActorRefFrom
 } from "xstate";
 import {type BaseRetriever} from "@langchain/core/retrievers";
-import fakeGetUserPhotos, {UserPost} from "./actors/photos.js";
+import  {getInstagramPosts, UserPost} from "./actors/photos.js";
 import fakeLogin from "./actors/login.js";
 import {fakeAnalyzePhotos,Analysis} from "./actors/analyze.js";
 import fakeGetCatalog, {Product} from "./actors/catalog.js";
@@ -73,7 +73,7 @@ const catalogMachineSetup = setup({
         //     }
         // }),
         getUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"token" | "photos">) => {
-            for await (const event of fakeGetUserPhotos(input)) {
+            for await (const event of getInstagramPosts(input)) {
                 console.log("event", event);
                 if (signal.aborted) return;
                 input.photos.doc!.transact(() => {
@@ -276,8 +276,8 @@ export function catalog(doc: Y.Doc) {
 
 export type CatalogService = ActorRefFrom<typeof catalogMachine>
 
-
-export default catalog;
+export type CatalogState = keyof typeof catalogMachine["states"]
+ export default catalog;
 
 /*
 

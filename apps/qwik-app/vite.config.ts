@@ -21,7 +21,7 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
 
-const host = "local.pyzlo.com";
+const host = "0.0.0.0";
 const port = 443;
 export default defineConfig(({ command, mode }): UserConfig => {
   return {

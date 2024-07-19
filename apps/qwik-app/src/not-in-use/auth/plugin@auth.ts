@@ -7,7 +7,7 @@ const originalFetch = fetch;
 global.fetch = instagramFetchInterceptor(originalFetch);
 // const response = await AuthGET(req);
 // global.fetch = originalFetch;
-
+//routes/plugin@auth.ts
 export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
   () => ({
         
@@ -78,4 +78,14 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
         ],
   }),
 );
- 
+
+// export const InstagramLogin = component$(() => {
+//     const signIn = useSignIn();
+//     return (
+//         <Button  class="  
+//            rounded-full  border-0
+//           text-sm font-semibold
+//           bg-violet-50 text-violet-700
+//           hover:bg-violet-100"  onClick$={() => signIn.submit({ providerId: 'instagram', options: { redirectTo: '/posts' } })}>Sign In (authjs)</Button>
+//     );
+// });

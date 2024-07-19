@@ -3,12 +3,13 @@ import type {DocumentHead} from "@builder.io/qwik-city";
 import {component$, NoSerialize, noSerialize, useSignal, useStore, useTask$, useVisibleTask$} from '@builder.io/qwik';
 import YProvider from "y-partykit/provider";
 import * as Y from "yjs";
-import generateCatalog, {CatalogService} from "agent";
+import generateCatalog, {CatalogService, CatalogState} from "agent";
 import type {Product} from "agent/catalog";
-import Login, {Button} from "~/components/login";
 import {type UserPost} from "agent/posts";
 import PostsGallery from "~/components/posts";
-
+import Nav from "~/components/nav";
+import ProductsGallery from "~/components/gallary";
+import {ussAccessTokenCookie} from "~/routes/layout";
 export const Upload = component$(() => {
     return <label class="block">
         <span class="sr-only">Choose profile photo</span>
@@ -28,10 +29,10 @@ export default component$(() => {
         posts: noSerialize(new Y.Doc().getArray<UserPost>("photos")),
         analysis: noSerialize(new Y.Doc().getArray<Product>("analysis")),
         service: undefined as NoSerialize<CatalogService> | undefined,
-        state: "idle" as "error" | "done" | "getUserPhotos" | "analyzeUserPhotos" | "getCatalog" | "idle" | "confirm"
+        state: "idle" as CatalogState
     });
+    
 
-    const serviceState = useSignal(store.state);
 
     useVisibleTask$(async () => {
         await import ('@y-block/gallery')
@@ -48,6 +49,7 @@ export default component$(() => {
         store.posts = noSerialize(photos);
         store.analysis = noSerialize(analysis);
         store.service = noSerialize(actor);
+        store.state =actor.getSnapshot().value;
         actor.subscribe((state) => {
             console.debug("state:i", state.value, {
                 photos: state.context.photos.length,
@@ -55,8 +57,7 @@ export default component$(() => {
                 catalog: state.context.catalog.length,
                 error: state.context.error
             })
-
-            serviceState.value = state.value;
+            store.state = state.value;
 
         })
         start();
@@ -65,21 +66,26 @@ export default component$(() => {
         }
     })
 
+    const accessToken = ussAccessTokenCookie(); 
+    
+    useTask$( ({track}) => {
+        track(() => accessToken);
+        track(() => store.service);
+        if (accessToken.value && store.service) {
+            console.log('accessToken', accessToken.value, store.service.getSnapshot().value); 
+            store.service &&  store.service!.send({
+                type: "user.login",
+                token: accessToken.value
+            });
+        }
+    })
+
     return (<div>
-            <Login q:slot={"nav"} store={store}/>
-            <div class="box-border  gap-4 mt z-10-">
-                {serviceState.value}
-                {store.catalog && <y-gallery items={store.catalog} class="col-start-2">
-                    <product-card></product-card>
-                </y-gallery>}
-
-            </div>
+          <Nav store={store}  />
+           
+            <ProductsGallery store={store}></ProductsGallery>
             <PostsGallery store={store}></PostsGallery>
-
-
-            {/*{serviceState.value === "confirm" &&*/}
-            {/*    <PostsGallery store={store}  ></PostsGallery>*/}
-            {/*}*/}
+            
         </div>
     );
 });
