@@ -25,11 +25,16 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
       },
       
       callbacks:{
-          session: async ({session, user}) => {
-              console.log("session callback",session);
-              return session;
+          session: async ({session, user, token, newSession, trigger}) => {
+ 
+              console.log("session callback",{session, user , token, newSession, trigger});
+              
+              return {
+                  ...session,
+                  accessToken: token.accessToken
+              };
           }
-           
+            
   
       },
     
@@ -39,6 +44,7 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
         userinfo: 'https://graph.instagram.com/17841405793187218?fields=id,username',
         token:'https://api.instagram.com/oauth/access_token',
         account(token) {
+            console.log("account" , token);
             return {
                 service: 'instagram', 
                 token: token.access_token,

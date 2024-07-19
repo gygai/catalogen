@@ -1,5 +1,5 @@
 import {component$, NoSerialize, noSerialize, Slot, useStore, useVisibleTask$} from "@builder.io/qwik";
-import type {RequestEvent, RequestHandler} from "@builder.io/qwik-city";
+import {RequestEvent, RequestHandler, routeLoader$, server$} from "@builder.io/qwik-city";
 import * as Y from "yjs";
 import type {UserPost} from "agent/posts";
 import generateCatalog, {CatalogService} from "agent";
@@ -45,7 +45,44 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 // 
 // };
 
+export const getProvider = server$(
+    function () { 
+      
+      return {
+        clientId: this.env.get('INSTAGRAM_CLIENT_ID') || '362485702774061' ,
+        redirectUri: this.env.get('INSTAGRAM_REDIRECT_URI') || 'https://local.pyzlo.com/posts',
+        clientSecret: this.env.get('INSTAGRAM_CLIENT_SECRET') || 'c7',
+      };
+    }
+);
 
+
+export const useAuthorizeUrl = routeLoader$(async() => {
+  const {clientId, redirectUri, clientSecret} = await getProvider();
+  // return  `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${ encodeURIComponent( redirectUri)}&scope=user_profile,user_media&response_type=code`;
+     const uriBuilder = new URL('https://api.instagram.com/oauth/authorize');
+    uriBuilder.searchParams.set('client_id', clientId);
+    uriBuilder.searchParams.set('redirect_uri', 'https://local.pyzlo.com/posts');
+    uriBuilder.searchParams.set('scope', 'user_profile,user_media');
+    uriBuilder.searchParams.set('response_type', 'code');
+  
+    return uriBuilder.toString();
+})
+
+export const useTokenUrl = async (code:string) =>{
+    const {clientId, redirectUri, clientSecret} = await getProvider();
+
+    const params=  new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'authorization_code',
+      redirect_uri: 'https://local.pyzlo.com/posts',
+      scope: 'user_profile,user_media',
+      code: code
+    })
+  console.log('calllbak::',   code,   redirectUri);
+   return params;
+}
 
 export default component$(() => {
 

@@ -25,7 +25,7 @@ interface AgentState {
     catalog: Y.Array<Product>,
     error?: unknown;
 
-    token?: string,
+    token: Y.Text,
     page: number
 }
 
@@ -57,15 +57,21 @@ const catalogMachineSetup = setup({
                         event,
                         context: {token: previous}
                     }) => event.type === "user.login" ? event.token : previous
-        })
+        }),
+        "token.set": ({context, event}) => {
+            context.token.doc!.transact(() => {
+                context.token.delete(0, context.token.length);
+                context.token.insert(0, event.token);
+            })
+        }
 
     },
     actors: {
-        login: fromPromise(async ({emit}) => {
-            for await (const event of fakeLogin()) {
-                emit(event)
-            }
-        }),
+        // login: fromPromise(async ({emit}) => {
+        //     for await (const event of fakeLogin()) {
+        //         emit(event)
+        //     }
+        // }),
         getUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"token" | "photos">) => {
             for await (const event of fakeGetUserPhotos(input)) {
                 console.log("event", event);
@@ -118,18 +124,15 @@ const catalogMachine = catalogMachineSetup.createMachine({
         analysis: store.getArray<Analysis>("analysis"),
         products: products,
         page: 12,
-        token: undefined
+        token: store.getText("token")
     }),
 
     initial: 'idle',
     states: {
-        idle: {
-            invoke: {
-                src: "login"
-            },
+        idle: { 
             on: {
                 'user.login': {
-                    actions: ['token.assign'],
+                    actions: ['token.set'],
                     target: "getUserPhotos"
                 }
             }
@@ -139,7 +142,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
                 src: "getUserPhotos",
                 input: ({context}) => ({
                     photos: context.photos,
-                    token: context.token!
+                    token: context.token
                 }),
                 onDone: {
                     target: "confirm"
@@ -195,7 +198,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
         error: {
              on: {
                 'user.login': {
-                    actions: ['token.assign'],
+                    actions: ['token.set'],
                     target: "getUserPhotos"
                 },
                 'generate': 'getCatalog'
@@ -204,7 +207,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
         done: {
             on: {
                 'user.login': {
-                    actions: ['token.assign'],
+                    actions: ['token.set'],
                     target: "getUserPhotos"
                 },
                 'generate': 'getCatalog'
@@ -236,7 +239,7 @@ export function catalog(doc: Y.Doc) {
             analysis: doc.getArray<Analysis>("analysis"),
             products: {} as BaseRetriever,
             page: 12,
-            token: doc.getText("token")?.toJSON()
+            token: doc.getText("token")
         }
     })
     const actor = createActor(catalogMachine, {

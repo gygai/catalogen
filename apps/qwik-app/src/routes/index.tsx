@@ -35,7 +35,7 @@ export default component$(() => {
 
     useVisibleTask$(async () => {
         await import ('@y-block/gallery')
-        const room = 'gin'
+        const room = 'gina'
         const url = "localhost:1999";
         const provider = new YProvider(url, room, new Y.Doc({
             autoLoad: true,

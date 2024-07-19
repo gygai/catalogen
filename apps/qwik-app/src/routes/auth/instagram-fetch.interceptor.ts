@@ -16,6 +16,7 @@ export const instagramFetchInterceptor =
                 url === "https://api.instagram.com/oauth/access_token" &&
                 options.method === "POST"
             ) {
+                console.log(url, options)
                 const response = await originalFetch(url, options);
                 /* Clone the response to be able to modify it */
                 const clonedResponse = response.clone();
