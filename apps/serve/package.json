@@ -4,14 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "partykit dev --live",
-    "deploy": "partykit deploy"
+    "deploy": "partykit deploy  --with-vars"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.34",
     "@statelyai/agent": "^0.1.4",
     "@xstate/graph": "^2.0.0",
+    "@y-block/array": "^1.0.1-beta.2",
     "@y-block/gallery": "workspace:*",
+    "@y-block/props": "^1.0.1-beta.2",
+    "agent": "workspace:*",
     "ai": "^3.2.16",
+    "dotenv": "^16.4.5",
     "object-hash": "^3.0.0",
     "partysocket": "^1.0.1",
     "quill-cursors": "^4.0.2",
@@ -19,19 +23,19 @@
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
     "xstate": "^5.14.0",
-    "y-partykit": "^0.0.27",
+    "y-partykit": "^0.0.29",
     "y-quill": "^0.1.5",
     "yjs": "^13.6.14",
-    "zod": "^3.23.8",
-    "agent" : "workspace:*",
-    "@y-block/array": "^1.0.1-beta.2",
-    "@y-block/props": "^1.0.1-beta.2"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "partykit": "^0.0.100",
-    "typescript": "^5.4.2"
-  }
+    "typescript": "^5.4.2",
+    "@types/bun": "latest"
+  },
+  "module": "index.ts",
+  "type": "module"
 }

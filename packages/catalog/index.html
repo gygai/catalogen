@@ -20,7 +20,7 @@
 
 <body>
 <y-store>
-    <y-party-provider room="default0" url="localhost:1999">
+    <y-party-provider room="default0" url="local.pyzlo.com:1999">
         <div class="container mx-auto ">
             <y-gallery id="gallery">
                 <product-card></product-card>
@@ -33,9 +33,11 @@
 
 <script type="module">
     import * as Y from 'yjs';
-    import {connectFakeStore} from './src/fake-store/index.ts';
-    document.querySelector('y-gallery').items =  connectFakeStore(new Y.Doc(), 'items');
+    import {connectStore} from './src/fake-store/index.ts';
+    const {page,   randomChanges} =  connectStore(new Y.Doc(), 'page', 12);
+    randomChanges()
 
+    document.querySelector('y-gallery').items =  page;
 </script>
 
 

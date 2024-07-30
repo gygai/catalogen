@@ -9,5 +9,8 @@
   "serve": {
     "path": "public",
     "build": "app/client.tsx"
+  },
+  "define": {
+  
   }
 }

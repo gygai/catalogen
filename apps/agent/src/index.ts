@@ -1,216 +1,302 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { JsonOutputParser } from "@langchain/core/output_parsers";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { z } from "zod";
+'use strict';
+import * as Y from "yjs";
+import {
+    ActorRef,
+    assign,
+    createActor,
+    EventObject,
+    fromPromise,
+    ActorSystem,
+    PromiseSnapshot,
+    setup,
+    ErrorActorEvent,
+    Observer, InspectionEvent, StateValue, ActorRefFrom
+} from "xstate";
+import {type BaseRetriever} from "@langchain/core/retrievers";
+import  {getInstagramPosts, UserPost} from "./actors/photos.js";
+import fakeLogin from "./actors/login.js";
+import {fakeAnalyzePhotos,Analysis} from "./actors/analyze.js";
+import fakeGetCatalog, {Product} from "./actors/catalog.js";
+ 
+interface AgentState {
+    photos: Y.Array<UserPost>,
+    analysis: Y.Array<Analysis>,
+    products: BaseRetriever,
+    catalog: Y.Array<Product>,
+    error?: unknown;
 
-const serviceKey = {
-    "serviceurls": {
-        "AI_API_URL": "https://api.ai.prod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/d74b3f70ae904c59"
+    token: Y.Text,
+    page: number
+}
+
+type ActorPromise<TInput extends keyof AgentState> = {
+    input: Required<Pick<AgentState, TInput>>
+    system: ActorSystem<any>;
+    self: ActorRef<PromiseSnapshot<void, unknown>, any>;
+    signal: AbortSignal;
+    emit: (emitted: EventObject) => void;
+}
+
+const assignError= assign({
+    error: ( {event}:{event:ErrorActorEvent}) => event.error
+});
+
+const errorTransition= {
+    target: "error",
+    actions: [assignError]
+} as any
+
+const catalogMachineSetup = setup({
+    types: {} as {
+        context: AgentState,
+        input: { store: Y.Doc, products: BaseRetriever }
     },
-    "appname": "a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540",
-    "clientid": "sb-a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540",
-    "clientsecret": "***REMOVED***",
-    "identityzone": "sapit-core-playground-vole",
-    "identityzoneid": "2aaefd82-b1fe-4b56-aa22-851c0e271604",
-    "url": "https://sapit-core-playground-vole.authentication.eu10.hana.ondemand.com"
-};
-const models = ["gpt-35-turbo", "gpt-35-turbo-16k", "gpt-4", "gpt-4-32k", "gpt-4-turbo", "gpt-4-vision"];
+    actions: {
+        'token.assign': assign({
+            token: ({
+                        event,
+                        context: {token: previous}
+                    }) => event.type === "user.login" ? event.token : previous
+        }),
+        "token.set": ({context, event}) => {
+            context.token.doc!.transact(() => {
+                context.token.delete(0, context.token.length);
+                context.token.insert(0, event.token);
+            })
+        }
 
+    },
+    actors: {
+        // login: fromPromise(async ({emit}) => {
+        //     for await (const event of fakeLogin()) {
+        //         emit(event)
+        //     }
+        // }),
+        getUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"token" | "photos">) => {
+            for await (const event of getInstagramPosts(input)) {
+                console.log("event", event);
+                if (signal.aborted) return;
+                input.photos.doc!.transact(() => {
+                    input.photos.length > 20 && input.photos.delete(20, input.photos.length - 20);
+                    input.photos.insert( 0,[event]);
+                })            }
+        }),
 
-var model: ChatOpenAI = null;
+        analyzeUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"photos" | "analysis">) => {
+            for await (const analysis of fakeAnalyzePhotos(input)) {
+                if (signal.aborted) return ;
+                input.analysis.doc!.transact(() => {
+                    input.analysis.length > 20 && input.analysis.delete(20, input.analysis.length - 20);
+                    input.analysis.insert( 0,[analysis]);
+                })
+            }
+        }),
+        getCatalog: fromPromise(async ({
+                                           emit,
+                                           input,
+                                           signal
+                                       }: ActorPromise<"products" | "analysis" | "catalog" | "page">) => {
+            for await (const {index, ...product} of fakeGetCatalog(input)) {
+                console.log("getCatalog:event", `to: ${index}`, product);
+                if (signal.aborted) return;
+                const deletedItems = input.catalog.slice(index, index + 1);
 
+                input.catalog.doc!.transact(() => {
+                    input.catalog.length > 20 && input.catalog.delete(100, input.catalog.length - 100);
 
+                    input.catalog.length > index && input.catalog.delete(index, 1); 
+                    input.catalog.insert(index, [product]);
+                    // input.catalog.insert(index, deletedItems);
+                })
+            }
 
-/**
- * Functions
- */
+        })
 
-
-async function getAPIToken(): Promise<string> {
-    if (apiToken && new Date() < apiTokenExpiry) {
-        return apiToken;
     }
-    var clientId = serviceKey['clientid'];
-    var clientSecret = serviceKey['clientsecret'];
-    var authUrl = serviceKey['url'];
-    var baseAuth = btoa(`${clientId}:${clientSecret}`).toString();
-    try {
-        const response = await fetch(
-            `${authUrl}/oauth/token?grant_type=client_credentials`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Basic ${baseAuth}`
+})
+ 
+
+
+const catalogMachine = catalogMachineSetup.createMachine({
+    context: ({input: {store, products}}) => ({
+        photos: store.getArray<UserPost>("posts"),
+        catalog: store.getArray<Product>("catalog"),
+        analysis: store.getArray<Analysis>("analysis"),
+        products: products,
+        page: 12,
+        token: store.getText("token")
+    }),
+
+    initial: 'idle',
+    states: {
+        idle: { 
+            on: {
+                'user.login': {
+                    actions: ['token.set'],
+                    target: "getUserPhotos"
                 }
             }
-        );
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        //    console.debug(`Successfully retrieved API token`);
+        },
+        getUserPhotos: {
+            invoke: {
+                src: "getUserPhotos",
+                input: ({context}) => ({
+                    photos: context.photos,
+                    token: context.token
+                }),
+                onDone: {
+                    target: "confirm"
+                },
+                onError: errorTransition
+            }
 
-        apiToken = data.access_token;
-        apiTokenExpiry = new Date();
-        // Add 30 min to apiTokenExpiry
-        apiTokenExpiry.setMinutes(apiTokenExpiry.getMinutes() + 30);
+        },
+        confirm: { 
+            on: {
+                'posts.confirm': 'getCatalog'
+            }
+        },
+            
+            
+        
+        analyzeUserPhotos: {
+            invoke: {
+                src: "analyzeUserPhotos",
+                input: ({context}) => ({
+                    analysis: context.analysis,
+                    photos: context.photos
+                }),
+                onDone: {
+                    target: "getCatalog"
+                },
+                onError: {
+                    target: "getCatalog",
+                    actions: assign({
+                        error: ( {event}:{event:ErrorActorEvent}) => event.error
+                    })
+                }
 
-        return apiToken;
-    } catch (error) {
-        let errorMsg = "Invalid API Token Call " + error;
-        console.error(errorMsg);
-        // clean apitoken on error
-        apiToken = null;
-        console.log("Cleanning api token on API Token CALL error.");
-        throw new Error(errorMsg);
-    }
-}
+            }
+        },
+        getCatalog: {
+            invoke: {
+                src: "getCatalog",
+                input: ({context}) => ({
+                    photos: context.photos,
+                    products: context.products,
+                    catalog: context.catalog,
+                    analysis: context.analysis,
+                    page: context.page
+                }),
+                onDone: {
+                    target: "done"
+                },
+                onError: errorTransition
 
-
-async function getImageCharacteristics(imageUrl: string, type: string, description: string): Promise<ItemCharacteristic[]> {
-    const characteristics =
-        z.object({
-            characteristics: z.array(z.object({
-                title: z.string().describe("One word description of the characteristic e.g. color, the type of material, etc."),
-                value: z.string().describe("Value of the characteristic e.g. red, leather, etc."),
-                description: z.string().describe("More explainetory text of the characteristic"),
-                weight: z.number().describe("Weight of the characteristic in the final decision for example the number of the times the characteristic is mentioned in the image"),
-                reasoning: z.string().describe("Reasoning for the rate"),
-                category: z.string().describe("Category of the item in the image e.g. shoes, dress, etc.")
-            }))
-        }).describe("List of characteristics extracted from the image");
-
-    const result = await model.withStructuredOutput(characteristics).invoke(
-        [
-            new SystemMessage("You are a helpful assistant."),
-            new HumanMessage(`Here is an image of ${type} with the following description :\n ${description}`),
-            new HumanMessage({
-                "content": [
-                    {
-                        "type": "text",
-                        "text": `Here is an image of ${type} with the following description :\n ${description}`
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            url: imageUrl
-                        }
-                    }
-                ]
-            }),
-            new HumanMessage("can you please extract a list of characteristics from it ?")
-        ]
-    )
-
-    return result.characteristics;
-
-}
-
-async function getUserFavouritesCharacteristics(posts: SocialMediaPost[]): Promise<ItemCharacteristic[]> {
-
-    const characteristics =
-        z.object({
-            characteristics: z.array(z.object({
-                title: z.string().describe("One word description of the characteristic e.g. color, the type of material, etc."),
-                value: z.string().describe("Value of the characteristic e.g. red, leather, etc."),
-                likelihood: z.number().describe("Likelihood the characteristic from 0 to 100 to the user preference"),
-                description: z.string().describe("More explainetory text of the characteristic"),
-                weight: z.number().describe("Weight of the characteristic in the final decision for example the number of the times the characteristic is mentioned in the image"),
-                reasoning: z.string().describe("Reasoning for the rate"),
-                category: z.string().describe("Category of the item in the image e.g. shoes, dress, etc.")
-            }))
-        }).describe("List of characteristics extracted from the image");
-    /*
-    
-    */
-    const result = await model.withStructuredOutput(characteristics).invoke(
-        [
-            new SystemMessage("You are a persona analyer bot for fashion shopper assistant.\n that uses a list of social media posts to extract the user's favorite characteristics."),
-            new HumanMessage("Here are a list of items I posted on social media."),
-            ...posts.map(post => new HumanMessage({
-                "content":
-                    [
-                        { "type": "image_url", "image_url": { url: post.imageUrl } },
-                        { "type": "text", "text": post.text }
-                    ]
-
-            })),
-            new HumanMessage("can you please extract a list of characteristics that I favor ?. please include color, style, the type of material and type of  in the list of characteristics.")
-        ]);
-
-    return result.characteristics;
-
-}
-
-async function initModel(): Promise<void> {
-    model = new ChatOpenAI({
-        temperature: 0.7,
-        model: "gpt-4",
-        maxTokens: 1000,
-        openAIApiKey: await getAPIToken(),
-        configuration: {
-
-            baseURL: serviceKey.serviceurls.AI_API_URL,
-            defaultHeaders: {
-                "ai-resource-group": "default"
-            },
-            defaultQuery: {
-                "api-version": "2023-05-15"
+            }
+        },
+        error: {
+             on: {
+                'user.login': {
+                    actions: ['token.set'],
+                    target: "getUserPhotos"
+                },
+                'generate': 'getCatalog'
+            }
+        },
+        done: {
+            on: {
+                'user.login': {
+                    actions: ['token.set'],
+                    target: "getUserPhotos"
+                },
+                'generate': 'getCatalog'
             }
         }
+    }
+})
+
+export function catalog(doc: Y.Doc) {
+
+     const logger:Observer<InspectionEvent> = {
+            next: (value:InspectionEvent) =>  console.debug("inspect",  {
+                event: value.type,
+                root: value.rootId,
+                actorRef: value.actorRef.id,
+               
+            }),
+            error: (err:unknown) => console.error("inspect:error", err),
+            complete: () => console.debug("inspect:complete")
+        }
+        
+    const ystate =doc.getMap("state");
+    const savedState = ystate.get ('currentState');
+   const restoredState =  catalogMachine.resolveState({
+        value: savedState as StateValue || "idle" ,
+        context: {
+            photos: doc.getArray<UserPost>("posts"),
+            catalog: doc.getArray<Product>("catalog"),
+            analysis: doc.getArray<Analysis>("analysis"),
+            products: {} as BaseRetriever,
+            page: 12,
+            token: doc.getText("token")
+        }
+    })
+    const actor = createActor(catalogMachine, {
+        snapshot: restoredState,
+        logger: (msg) => console.debug(msg),
+        inspect: logger,
+        input: {store: doc, products: {} as BaseRetriever}
+    })
+
+
+
+    actor.subscribe((state) => {
+        console.debug("state", state.value , {
+            photos: state.context.photos.length,
+            analysis: state.context.analysis.length,
+            catalog: state.context.catalog.length,
+            error: state.context.error
+            })
+        
+        ystate.set("currentState", state.value);
+        
+        
     });
 
-    setInterval(async () => {
-        model.openAIApiKey = await getAPIToken();
-    }, 1000);
+
+    return {
+        actor,
+        start: () => actor.start(),
+        photos: actor.getSnapshot().context.photos,
+        catalog: actor.getSnapshot().context.catalog,
+        analysis: actor.getSnapshot().context.analysis,
+    };
 }
 
-(async function () {
+export type CatalogService = ActorRefFrom<typeof catalogMachine>
 
-    await initModel();
-
-    console.log("Starting the AI Engine");
-    console.log(JSON.stringify(await getImageCharacteristics("https://m.media-amazon.com/images/I/71nVRe1IaWL._AC_UY900_.jpg", "shoes", "A pair of shoes with a white sole and black upper."), null, 2));
-
-
-    var fav = await getUserFavouritesCharacteristics([
-        { imageUrl: 'https://pavers.ie/cdn/shop/products/976973_grande.jpg?v=1626594193', text: "I really like this pair of shoes. They are very comfortable and stylish." },
-        { imageUrl: 'https://images.halloweencostumes.eu/products/85337/1-1/red-clown-shoes.jpg', text: " I hate it, its not my style or even my color" },
-        { imageUrl: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/63c77c04dc6448548ccbae880189e107_9366/Galaxy_6_Shoes_Black_GW3848_01_standard.jpg', text: "I like the design but I am not sure about the color." },]);
-
-
-    console.log(JSON.stringify(fav, null, 2));
-
-    return;
-
-
-
-})();
-
-
+export type CatalogState = keyof typeof catalogMachine["states"]
+ export default catalog;
 
 /*
 
-
-*/
-
-interface ItemCharacteristic {
-    title?: string,
-    value?: string,
-    description?: string,
-    weight?: number,
-    reasoning?: string,
-    category?: string
-}
-
-interface SocialMediaPost {
-    imageUrl: string;
-    text: string;
-}
-
-/**
- * STARTUP
+    doc.getArray<EventFrom<typeof catalogMachine>>("events")
+        .observe((event) => {
+            console.log("events", event);
+            actor
+                .send(event.delta.filter((e) => e.insert instanceof Array)[0]
+                    .insert as EventObject)
+        })
+        
+                confirmPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"confirm">) => {
+            return new Promise<void>((resolve) => {
+                input.confirm.observe((event) => {
+                    if (event.keysChanged.has("confirm")) {
+                        console.log("confirmPhotos:event", event.keysChanged.has("confirm"));
+                        resolve();
+                    }
+                })
+            })
+        }),
  */
-
-
-

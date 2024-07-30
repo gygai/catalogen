@@ -7,6 +7,10 @@
     "src/stories"
   ],
   "compilerOptions": {
-    "outDir": "types"
+    "outDir": "types",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   }
 }

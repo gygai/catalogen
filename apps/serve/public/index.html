@@ -19,12 +19,18 @@
 
     <link rel="stylesheet" href="/normalize.css" />
     <link rel="stylesheet" href="/dist/client.css" />
+    <script src="/streaming-element.js"></script>
   </head>
   <body>
-    <div id="app"></div>
-    <y-gallery id="gallery">
+    <div id="app">
+      
+      <login-button><button id="login">Login</button></login-button>
+      <c-analysis></c-analysis>
+      <y-gallery id="gallery">
       <product-card></product-card>
     </y-gallery>
+    </div>
+    <y-store ></y-store>
     <script type="module" src="/dist/client.js"></script>
   </body>
 </html>
