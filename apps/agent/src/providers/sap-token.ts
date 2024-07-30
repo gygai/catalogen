@@ -4,29 +4,31 @@ import {
     createMachine,
     emit,
     fromCallback,
-    fromPromise, InputFrom,
+    fromPromise,   InputFrom,
     log,
     waitFor
 } from "xstate";
  
-export async function fetchToken({input: {creds}}: {
-    input: { creds: { clientid: string, clientsecret: string, tokenurl: string } }
-}) {
-     const response = await fetch(`${creds.tokenurl}?grant_type=client_credentials`, {
+
+type Creds= { client_id: string, client_secret: string, token_url: string }
+export async function fetchToken({input:creds}: {
+    input: Creds }) {
+     const response = await fetch(`${creds.token_url}?grant_type=client_credentials`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Basic ${btoa(`${creds.clientid}:${creds.clientsecret}`)}`
+            "Authorization": `Basic ${btoa(`${creds.client_id}:${creds.client_secret}`)}`
         },
         body: JSON.stringify({
-            client_id: creds.clientid,
-            client_secret: creds.clientsecret,
+            client_id: creds.client_id,
+            client_secret: creds.client_secret,
             grant_type: "client_credentials",
         }),
     });
     if(!isSuccessfulStatus(response.status )) throw new Error(`Failed to fetch token: ${response.statusText}  ${await response.text()}`);
     console.log("success response from token api" , response.status, response.statusText);
     const {access_token} = await response.json();
+
     return access_token
 }
 
@@ -46,46 +48,58 @@ export function isSuccessfulStatus(status: number){
     return status >= 200 && status < 300;
 }
 
+export type CredsEvent = {type: 'creds' } & Creds
+
 //token machine to fetch the token if expired, or not available
 const tokenMachine = createMachine({
-    id: 'token',
-    initial: 'loading',
-
+    id: 'token', 
     types: {
         context: {} as {
             token?: string,
-            creds: {
-                clientid: string,
-                clientsecret: string,
-                tokenurl: string
-            }
+            creds?: Creds
         },
         input: {} as {
-            env: typeof process.env
+            creds?: Creds
         }
     },
-    context: ({input: {env}}) => ({
-        creds: {
-            clientid: env.SAP_CLIENT_ID!,
-            clientsecret: env.SAP_CLIENT_SECRET!,
-            tokenurl: env.SAP_TOKEN_URL!
-        }
+    initial:'no_creds',
+     
+    context: ({input}) => ({
+        creds: input?.creds
     }),
+    
     states: {
-        loading: {
+        no_creds:{
+            on:{
+                creds:{
+                    target: 'fetch',
+                    actions: assign({
+                        creds: ({event} ) => event as CredsEvent
+                    })
+                }
+            },
+            always: {
+                target: 'fetch',
+                guard: ({context}) => !!context.creds
+            } 
+        },
+        fetch: {
             invoke: {
                 src: fromPromise(fetchToken),
-                input: ({context}) => ({
-                    creds: context.creds
-                }),
+                input: ({context}) => context.creds,
                 onDone: {
                     target: 'success',
                     actions: [assign({
                         token: ({event}) => event.output
                     })]
                 },
-                onError: {target: 'failure', actions: [log((event) => event)]}
+                onError: {
+                    target: 'failure', actions: log(({event, context}) => ({
+                    ...event,
+                    url: context.creds?.token_url
+                }))
             }
+        }
         },
         success: {
             invoke: {
@@ -99,7 +113,7 @@ const tokenMachine = createMachine({
                 })
             },
             on: {
-                REFRESH: 'loading'
+                REFRESH: 'fetch'
             }
         },
         failure: {
@@ -113,22 +127,29 @@ const tokenMachine = createMachine({
                 })
             },
             on: {
-                RETRY: 'loading'
+                RETRY: 'fetch'
             }
         }
 
     }
 })
 
-export function createTokenService(input: InputFrom<typeof tokenMachine> = {
-    env: process.env
-}) {
+
+export const credsFromEnv= {
+    get client_id(){return process.env.SAP_CLIENT_ID!},
+    get client_secret(){return process.env.SAP_CLIENT_SECRET!},
+    get token_url(){return  process.env.SAP_TOKEN_URL!}
+}
+
+export function createTokenService(input?: InputFrom<typeof tokenMachine>  ) {
     const actor = createActor(tokenMachine, {
         input
     })
- 
     return {
          actor: actor.start(),
+         credentials: (creds: Creds) => actor.send({type:"creds" , ...creds}),
+         credentialsFromEnv: () => actor.send({type:"creds" , ...credsFromEnv}),
+
          accessToken: async () => {
              const {context: {token}} = await waitFor(actor, state => state.matches('success'))
              return token!;
@@ -137,7 +158,11 @@ export function createTokenService(input: InputFrom<typeof tokenMachine> = {
 }
 
 export function getAccessToken(env=process.env) {
-    return createTokenService({env}).accessToken()
+
+    return createTokenService({creds:credsFromEnv}).accessToken()
 }
  
 export default tokenMachine;
+
+
+export const tokenService = createTokenService( )

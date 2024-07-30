@@ -10,38 +10,22 @@ import {
     PromiseSnapshot,
     setup,
     ErrorActorEvent,
-    Observer, InspectionEvent, StateValue, ActorRefFrom
+    Observer, InspectionEvent, StateValue, ActorRefFrom,
+    ActorLogic,
+    Snapshot,
+    PromiseActorLogic
 } from "xstate";
-import {type BaseRetriever} from "@langchain/core/retrievers";
-import  {getInstagramPosts, UserPost} from "./actors/photos.js";
-import fakeLogin from "./actors/login.js";
-import {fakeAnalyzePhotos,Analysis} from "./actors/analyze.js";
-import fakeGetCatalog, {Product} from "./actors/catalog.js";
- 
-interface AgentState {
-    photos: Y.Array<UserPost>,
-    analysis: Y.Array<Analysis>,
-    products: BaseRetriever,
-    catalog: Y.Array<Product>,
-    error?: unknown;
+import { type BaseRetriever } from "@langchain/core/retrievers";
+import { getInstagramPosts, UserPost } from "./actors/photos.js";
+import { getImageCharacteristics, fakeAnalyzePhotos, Analysis } from "./actors/analyze.js";
+import fakeGetCatalog, { Product } from "./actors/catalog.js";
 
-    token: Y.Text,
-    page: number
-}
 
-type ActorPromise<TInput extends keyof AgentState> = {
-    input: Required<Pick<AgentState, TInput>>
-    system: ActorSystem<any>;
-    self: ActorRef<PromiseSnapshot<void, unknown>, any>;
-    signal: AbortSignal;
-    emit: (emitted: EventObject) => void;
-}
-
-const assignError= assign({
-    error: ( {event}:{event:ErrorActorEvent}) => event.error
+const assignError = assign({
+    error: ({ event }: { event: ErrorActorEvent }) => event.error
 });
 
-const errorTransition= {
+const errorTransition = {
     target: "error",
     actions: [assignError]
 } as any
@@ -54,11 +38,11 @@ const catalogMachineSetup = setup({
     actions: {
         'token.assign': assign({
             token: ({
-                        event,
-                        context: {token: previous}
-                    }) => event.type === "user.login" ? event.token : previous
+                event,
+                context: { token: previous }
+            }) => event.type === "user.login" ? event.token : previous
         }),
-        "token.set": ({context, event}) => {
+        "token.set": ({ context, event }) => {
             context.token.doc!.transact(() => {
                 context.token.delete(0, context.token.length);
                 context.token.insert(0, event.token);
@@ -67,58 +51,52 @@ const catalogMachineSetup = setup({
 
     },
     actors: {
-        // login: fromPromise(async ({emit}) => {
-        //     for await (const event of fakeLogin()) {
-        //         emit(event)
-        //     }
-        // }),
-        getUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"token" | "photos">) => {
+
+        getUserPhotos: fromPromise(async ({ emit, input, signal }: ActorPromise<"token" | "photos">) => {
             for await (const event of getInstagramPosts(input)) {
                 console.log("event", event);
                 if (signal.aborted) return;
                 input.photos.doc!.transact(() => {
                     input.photos.length > 20 && input.photos.delete(20, input.photos.length - 20);
-                    input.photos.insert( 0,[event]);
-                })            }
+                    input.photos.insert(0, [event]);
+                })
+            }
         }),
 
-        analyzeUserPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"photos" | "analysis">) => {
-            for await (const analysis of fakeAnalyzePhotos(input)) {
-                if (signal.aborted) return ;
+        analyzeUserPhotos: fromPromise(async ({ emit, input, signal }: ActorPromise<"photos" | "analysis">) => {
+            for await (const analysis of getImageCharacteristics(input)) {
+                if (signal.aborted) return;
                 input.analysis.doc!.transact(() => {
                     input.analysis.length > 20 && input.analysis.delete(20, input.analysis.length - 20);
-                    input.analysis.insert( 0,[analysis]);
+                    input.analysis.insert(0, [analysis]);
                 })
             }
         }),
+
         getCatalog: fromPromise(async ({
-                                           emit,
-                                           input,
-                                           signal
-                                       }: ActorPromise<"products" | "analysis" | "catalog" | "page">) => {
-            for await (const {index, ...product} of fakeGetCatalog(input)) {
+            input,
+            signal
+        }: ActorPromise<"products" | "analysis" | "catalog" | "page">) => {
+            for await (const { index, ...product } of fakeGetCatalog(input)) {
                 console.log("getCatalog:event", `to: ${index}`, product);
-                if (signal.aborted) return;
-                const deletedItems = input.catalog.slice(index, index + 1);
-
+                if (signal.aborted) return; 
                 input.catalog.doc!.transact(() => {
-                    input.catalog.length > 20 && input.catalog.delete(100, input.catalog.length - 100);
-
-                    input.catalog.length > index && input.catalog.delete(index, 1); 
+                    input.catalog.length > 20 && input.catalog.delete(100, input.catalog.length - 100); 
+                    input.catalog.length > index && input.catalog.delete(index, 1);
                     input.catalog.insert(index, [product]);
-                    // input.catalog.insert(index, deletedItems);
                 })
             }
 
-        })
+        }),
+        conifrm: undefined as unknown as CatalogActorLogic<"photos">
 
     }
 })
- 
+
 
 
 const catalogMachine = catalogMachineSetup.createMachine({
-    context: ({input: {store, products}}) => ({
+    context: ({ input: { store, products } }) => ({
         photos: store.getArray<UserPost>("posts"),
         catalog: store.getArray<Product>("catalog"),
         analysis: store.getArray<Analysis>("analysis"),
@@ -129,7 +107,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
 
     initial: 'idle',
     states: {
-        idle: { 
+        idle: {
             on: {
                 'user.login': {
                     actions: ['token.set'],
@@ -140,7 +118,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
         getUserPhotos: {
             invoke: {
                 src: "getUserPhotos",
-                input: ({context}) => ({
+                input: ({ context }) => ({
                     photos: context.photos,
                     token: context.token
                 }),
@@ -151,18 +129,22 @@ const catalogMachine = catalogMachineSetup.createMachine({
             }
 
         },
-        confirm: { 
+        confirm: {
+            invoke: {
+                src: "conifrm",
+                input: ({ context: { photos } }) => ({
+                    photos
+                }),
+                onDone: 'getCatalog'
+            },
             on: {
                 'posts.confirm': 'getCatalog'
             }
-        },
-            
-            
-        
+        }, 
         analyzeUserPhotos: {
             invoke: {
                 src: "analyzeUserPhotos",
-                input: ({context}) => ({
+                input: ({ context }) => ({
                     analysis: context.analysis,
                     photos: context.photos
                 }),
@@ -172,7 +154,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
                 onError: {
                     target: "getCatalog",
                     actions: assign({
-                        error: ( {event}:{event:ErrorActorEvent}) => event.error
+                        error: ({ event }: { event: ErrorActorEvent }) => event.error
                     })
                 }
 
@@ -181,7 +163,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
         getCatalog: {
             invoke: {
                 src: "getCatalog",
-                input: ({context}) => ({
+                input: ({ context }) => ({
                     photos: context.photos,
                     products: context.products,
                     catalog: context.catalog,
@@ -196,7 +178,7 @@ const catalogMachine = catalogMachineSetup.createMachine({
             }
         },
         error: {
-             on: {
+            on: {
                 'user.login': {
                     actions: ['token.set'],
                     target: "getUserPhotos"
@@ -216,23 +198,23 @@ const catalogMachine = catalogMachineSetup.createMachine({
     }
 })
 
-export function catalog(doc: Y.Doc) {
+export const logger: Observer<InspectionEvent> = {
+    next: (value: InspectionEvent) => console.debug("inspect", {
+        event: value.type,
+        root: value.rootId,
+        actorRef: value.actorRef.id,
 
-     const logger:Observer<InspectionEvent> = {
-            next: (value:InspectionEvent) =>  console.debug("inspect",  {
-                event: value.type,
-                root: value.rootId,
-                actorRef: value.actorRef.id,
-               
-            }),
-            error: (err:unknown) => console.error("inspect:error", err),
-            complete: () => console.debug("inspect:complete")
-        }
-        
-    const ystate =doc.getMap("state");
-    const savedState = ystate.get ('currentState');
-   const restoredState =  catalogMachine.resolveState({
-        value: savedState as StateValue || "idle" ,
+    }),
+    error: (err: unknown) => console.error("inspect:error", err),
+    complete: () => console.debug("inspect:complete")
+}
+
+export function catalog(doc: Y.Doc, create?: typeof createActor<typeof catalogMachine>) { 
+
+    const ystate = doc.getMap("state");
+    const savedState = ystate.get('currentState');
+    const restoredState = catalogMachine.resolveState({
+        value: savedState as StateValue || "idle",
         context: {
             photos: doc.getArray<UserPost>("posts"),
             catalog: doc.getArray<Product>("catalog"),
@@ -242,26 +224,23 @@ export function catalog(doc: Y.Doc) {
             token: doc.getText("token")
         }
     })
-    const actor = createActor(catalogMachine, {
+
+    const actor = (create ?? createActor)(catalogMachine, {
         snapshot: restoredState,
         logger: (msg) => console.debug(msg),
-        inspect: logger,
-        input: {store: doc, products: {} as BaseRetriever}
+        input: { store: doc, products: {} as BaseRetriever }
     })
-
-
-
     actor.subscribe((state) => {
-        console.debug("state", state.value , {
+        console.debug("state", state.value, {
             photos: state.context.photos.length,
             analysis: state.context.analysis.length,
             catalog: state.context.catalog.length,
             error: state.context.error
-            })
-        
+        })
+
         ystate.set("currentState", state.value);
-        
-        
+
+
     });
 
 
@@ -277,26 +256,28 @@ export function catalog(doc: Y.Doc) {
 export type CatalogService = ActorRefFrom<typeof catalogMachine>
 
 export type CatalogState = keyof typeof catalogMachine["states"]
- export default catalog;
 
-/*
+interface AgentState {
+    photos: Y.Array<UserPost>,
+    analysis: Y.Array<Analysis>,
+    products: BaseRetriever,
+    catalog: Y.Array<Product>,
+    error?: unknown;
 
-    doc.getArray<EventFrom<typeof catalogMachine>>("events")
-        .observe((event) => {
-            console.log("events", event);
-            actor
-                .send(event.delta.filter((e) => e.insert instanceof Array)[0]
-                    .insert as EventObject)
-        })
-        
-                confirmPhotos: fromPromise(async ({emit, input, signal}: ActorPromise<"confirm">) => {
-            return new Promise<void>((resolve) => {
-                input.confirm.observe((event) => {
-                    if (event.keysChanged.has("confirm")) {
-                        console.log("confirmPhotos:event", event.keysChanged.has("confirm"));
-                        resolve();
-                    }
-                })
-            })
-        }),
- */
+    token: Y.Text,
+    page: number
+}
+
+type ActorPromise<TInput extends keyof AgentState> = {
+    input: Required<Pick<AgentState, TInput>>
+    system: ActorSystem<any>;
+    self: ActorRef<PromiseSnapshot<void, unknown>, any>;
+    signal: AbortSignal;
+    emit: (emitted: EventObject) => void;
+}
+
+type CatalogActorLogic<TInput extends keyof AgentState> = PromiseActorLogic<any, Pick<AgentState, TInput>> | ActorLogic<Snapshot<any>, EventObject, Pick<AgentState, TInput>>
+
+export default catalog;
+
+ 

@@ -1,12 +1,25 @@
 import * as Y from "yjs";
 import createCatalogAgent from "./index.js";
-import {waitFor} from "xstate";
-import * as fs from "node:fs";
+import {createActor, fromPromise, waitFor} from "xstate";
+import * as fs from "node:fs"; 
+import { tokenService } from "./providers/sap-token.js";
+import * as readline from 'node:readline/promises';
 
-import {config} from 'dotenv';
+import {config} from 'dotenv'; 
 config();
+
+const terminal = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+
+tokenService.credentialsFromEnv();
  
-const {actor, catalog, photos,analysis} = createCatalogAgent(new Y.Doc());
+const {actor, catalog, photos,analysis} = createCatalogAgent(new Y.Doc(), (logic, options) =>createActor(logic.provide({
+    actors:{  conifrm: fromPromise(async ()=>     await terminal.question('Confirm? '))}
+    }), options));
+    
 fs.mkdirSync("dist/log", {recursive: true, mode: 0o755});
 
 photos.observe((event) => {

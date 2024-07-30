@@ -1,10 +1,11 @@
 #!/usr/bin/env ts-node
 import { openai } from '@ai-sdk/openai';
 import { CoreMessage, streamText } from 'ai';
-import {config} from 'dotenv';
 import * as readline from 'node:readline/promises';
 import {openaiGP4o} from "../providers/openai.js";
-
+import { tokenService  } from '../providers/sap-token.js';
+import {config} from 'dotenv';
+config()
 
 const terminal = readline.createInterface({
     input: process.stdin,
@@ -14,13 +15,15 @@ const terminal = readline.createInterface({
 const messages: CoreMessage[] = [];
 
 async function main() {
+    tokenService.credentialsFromEnv();
+
     while (true) {
         const userInput = await terminal.question('You: ');
 
         messages.push({ role: 'user', content: userInput });
 
         const result = await streamText({
-            model: openaiGP4o,
+            model: openaiGP4o(),
             system: `You are a helpful, respectful and honest assistant.`,
             messages,
         });
