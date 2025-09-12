@@ -33,17 +33,7 @@ export async function fetchToken({input:creds}: {
 }
 
 
-//sb-a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540:5050fd60-3753-4d1f-a516-3c60da0c6b03$bgVfrP64MBsPr8L8qbHrK69NdDRMK1Dm6yxqkkyFpP4=
-//sb-a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540:5050fd60-3753-4d1f-a516-3c60da0c6b03$bgVfrP64MBsPr8L8qbHrK69NdDRMK1Dm6yxqkkyFpP4= 
 
-/*
-  creds: {
-      clientid: 'sb-a9868d84-4cbb-4e26-8be6-1442d51051b3!b313091|aisvc-662318f9-ies-aicore-service!b540',
-      clientsecret: '5050fd60-3753-4d1f-a516-3c60da0c6b03$bgVfrP64MBsPr8L8qbHrK69NdDRMK1Dm6yxqkkyFpP4= ',
-      tokenurl: 'https://sapit-core-playground-vole.authentication.eu10.hana.ondemand.com/oauth/token'
-    }
-
- */
 export function isSuccessfulStatus(status: number){
     return status >= 200 && status < 300;
 }
